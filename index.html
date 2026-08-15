@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATS — Automotive Tech Solutions</title>
+<meta name="description" content="Advanced diagnostics, key programming, ECU bench work and ADAS calibration. Sharjah, UAE.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Montserrat:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0A0B0D;
+    --panel:#141518;
+    --panel-2:#1B1D21;
+    --line:#28292E;
+    --white:#F4F4F2;
+    --gray:#8B8E95;
+    --gray-dim:#5A5C62;
+    --orange:#C6602C;
+    --orange-dim:#8C4620;
+    --blue:#2A73FF;
+    --blue-dim:#173B87;
+    --radius:2px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Montserrat',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  ::selection{background:var(--orange);color:var(--black);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--blue);outline-offset:3px;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(10,11,13,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1180px; margin:0 auto; padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-brand{display:flex; align-items:center; gap:12px;}
+  .nav-brand svg{width:30px; height:30px; flex-shrink:0;}
+  .nav-brand-text{display:flex; flex-direction:column; line-height:1.1;}
+  .nav-brand-text .t{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; letter-spacing:0.02em;}
+  .nav-brand-text .s{font-size:9px; color:var(--gray-dim); letter-spacing:0.08em; text-transform:uppercase; font-family:'JetBrains Mono',monospace;}
+  .nav-links{display:flex; align-items:center; gap:28px;}
+  .nav-links a{font-size:13px; color:var(--gray); transition:color .2s;}
+  .nav-links a:hover{color:var(--white);}
+  .nav-social{display:flex; align-items:center; gap:14px; margin-left:8px; padding-left:22px; border-left:1px solid var(--line);}
+  .nav-social a{width:16px; height:16px; color:var(--gray); transition:color .2s;}
+  .nav-social a:hover{color:var(--orange);}
+  .nav-social svg{width:100%; height:100%;}
+  @media (max-width:780px){
+    .nav-links a:not(.nav-social a){display:none;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:140px 0 100px;
+    overflow:hidden;
+  }
+  .hero-grid{
+    position:absolute; inset:0; z-index:0; opacity:0.5;
+    background-image:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 35%, black, transparent);
+  }
+  .hero-inner{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px; align-items:center;
+  }
+  @media (max-width:900px){
+    .hero-inner{grid-template-columns:1fr; gap:48px;}
+    .hero-mark-col{order:-1; display:flex; justify-content:center;}
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--orange); margin-bottom:22px;
+  }
+  .eyebrow::before{content:''; width:7px; height:7px; background:var(--orange); border-radius:1px; box-shadow:0 0 8px var(--orange);}
+  .hero h1{
+    font-size:clamp(2.5rem, 5.2vw, 4.6rem);
+    font-weight:700; line-height:1.03; letter-spacing:-0.02em;
+    margin-bottom:24px;
+  }
+  .hero h1 em{font-style:normal; color:var(--orange);}
+  .hero p.lede{
+    font-size:clamp(1rem, 1.5vw, 1.15rem); color:var(--gray); max-width:520px; margin-bottom:36px;
+  }
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:44px;}
+  .btn{
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px;
+    padding:14px 26px; border-radius:var(--radius); display:inline-flex; align-items:center; gap:8px;
+    transition:transform .18s ease, background .18s ease, border-color .18s ease;
+  }
+  .btn-primary{background:var(--orange); color:var(--black);}
+  .btn-primary:hover{transform:translateY(-2px); background:#D66C34;}
+  .btn-outline{border:1px solid var(--line); color:var(--white);}
+  .btn-outline:hover{border-color:var(--blue); transform:translateY(-2px);}
+  .hero-meta{display:flex; gap:32px; flex-wrap:wrap;}
+  .hero-meta div{display:flex; flex-direction:column; gap:4px;}
+  .hero-meta .val{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white);}
+  .hero-meta .lbl{font-size:10px; color:var(--gray-dim); text-transform:uppercase; letter-spacing:0.1em;}
+
+  .hero-mark-col svg{width:min(360px, 60vw); height:auto; filter:drop-shadow(0 0 60px rgba(198,96,44,0.12));}
+
+  /* ---------- TRACE DIVIDER (signature element) ---------- */
+  .trace{
+    position:relative; width:100%; height:56px; overflow:hidden;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:var(--panel);
+  }
+  .trace svg{width:100%; height:100%; display:block;}
+  .trace path{
+    fill:none; stroke:var(--blue); stroke-width:1.4;
+    stroke-dasharray:1400; stroke-dashoffset:1400;
+    transition:stroke-dashoffset 1.8s cubic-bezier(.16,.84,.44,1);
+  }
+  .trace.in-view path{stroke-dashoffset:0;}
+  .trace .pulse{stroke:var(--orange); stroke-width:1.4; opacity:0.85;}
+
+  /* ---------- SECTION SHARED ---------- */
+  section{padding:96px 0;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+    margin-bottom:52px; flex-wrap:wrap;
+  }
+  .section-tag{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--gray-dim); margin-bottom:14px; display:block;
+  }
+  .section-head h2{font-size:clamp(1.7rem, 3vw, 2.3rem); font-weight:600; max-width:560px;}
+  .section-head p{color:var(--gray); max-width:400px; font-size:14.5px;}
+
+  /* ---------- CAPABILITIES ---------- */
+  .cap-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  @media (max-width:900px){.cap-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.cap-grid{grid-template-columns:1fr;}}
+  .cap-card{
+    background:var(--panel); padding:32px 26px; position:relative;
+    transition:background .2s ease;
+  }
+  .cap-card:hover{background:var(--panel-2);}
+  .cap-code{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    padding:4px 8px; border:1px solid var(--line); display:inline-block; margin-bottom:22px;
+  }
+  .cap-card.accent-orange .cap-code{color:var(--orange); border-color:var(--orange-dim);}
+  .cap-card.accent-blue .cap-code{color:var(--blue); border-color:var(--blue-dim);}
+  .cap-card h3{font-size:19px; font-weight:600; margin-bottom:10px;}
+  .cap-card p{font-size:13.5px; color:var(--gray); margin-bottom:22px; min-height:66px;}
+  .cap-price{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--white); border-top:1px solid var(--line); padding-top:16px;}
+  .cap-price .note{display:block; font-size:10.5px; color:var(--gray-dim); margin-top:4px; text-transform:uppercase; letter-spacing:0.06em;}
+
+  /* ---------- TOOL ARSENAL ---------- */
+  .tool-list{display:flex; flex-direction:column; border-top:1px solid var(--line);}
+  .tool-row{
+    display:grid; grid-template-columns:60px 1fr auto; gap:24px; align-items:center;
+    padding:22px 0; border-bottom:1px solid var(--line);
+  }
+  .tool-row .tool-icon{width:38px; height:38px; color:var(--gray);}
+  .tool-row:hover .tool-icon{color:var(--orange);}
+  .tool-row h4{font-size:16px; font-weight:600; margin-bottom:3px;}
+  .tool-row .desc{font-size:13px; color:var(--gray);}
+  .tool-row .status{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--gray-dim); text-transform:uppercase; letter-spacing:0.08em; text-align:right; white-space:nowrap;}
+  @media (max-width:600px){
+    .tool-row{grid-template-columns:44px 1fr; }
+    .tool-row .status{grid-column:2; text-align:left; margin-top:4px;}
+  }
+
+  .roadmap-strip{
+    margin-top:40px; padding:22px 24px; border:1px solid var(--line); background:var(--panel);
+    display:flex; gap:10px; overflow-x:auto;
+  }
+  .roadmap-strip .rm{
+    flex:0 0 auto; padding:10px 16px; border:1px solid var(--line); font-family:'JetBrains Mono',monospace;
+    font-size:11px; color:var(--gray); white-space:nowrap;
+  }
+  .roadmap-strip .rm .m{color:var(--gray-dim); display:block; font-size:9.5px; margin-bottom:3px;}
+
+  /* ---------- OEM COVERAGE ---------- */
+  .oem-groups{display:flex; flex-direction:column; gap:36px;}
+  .oem-group-label{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--gray-dim); display:block; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--line);
+  }
+  .oem-group-row{display:flex; flex-wrap:wrap; gap:18px;}
+  .oem-badge{display:flex; flex-direction:column; align-items:center; gap:9px; width:92px;}
+  .oem-glyph{
+    width:60px; height:60px; border:1px solid var(--line); background:var(--panel);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.01em;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .oem-badge:nth-child(odd) .oem-glyph{border-top:2px solid var(--orange-dim);}
+  .oem-badge:nth-child(even) .oem-glyph{border-top:2px solid var(--blue-dim);}
+  .oem-badge:hover .oem-glyph{transform:translateY(-3px); border-color:var(--orange); border-top-color:var(--orange);}
+  .oem-badge .oem-name{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--gray); text-align:center; line-height:1.3;}
+
+  /* ---------- LOCATION ---------- */
+  .loc-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line);}
+  @media (max-width:800px){.loc-grid{grid-template-columns:1fr;}}
+  .loc-info{padding:44px; border-right:1px solid var(--line);}
+  @media (max-width:800px){.loc-info{border-right:none; border-bottom:1px solid var(--line);}}
+  .loc-info h3{font-size:22px; margin-bottom:6px;}
+  .loc-info .addr{color:var(--gray); font-size:14px; margin-bottom:28px;}
+  .loc-row{display:flex; justify-content:space-between; padding:12px 0; border-top:1px solid var(--line); font-size:13px;}
+  .loc-row .k{color:var(--gray-dim); font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em;}
+  .loc-map{
+    position:relative; min-height:280px;
+    background:
+      linear-gradient(to right, var(--line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+    background-size:36px 36px; background-color:var(--panel);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .loc-pin{display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .loc-pin svg{width:34px; height:34px; color:var(--orange);}
+  .loc-pin span{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gray); text-align:center;}
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  .contact{
+    padding:100px 0 60px; text-align:center; border-top:1px solid var(--line);
+  }
+  .contact h2{font-size:clamp(1.9rem,4vw,3rem); margin-bottom:18px;}
+  .contact p{color:var(--gray); max-width:460px; margin:0 auto 40px;}
+  .contact-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:64px;}
+
+  /* ---------- BOOKING FORM ---------- */
+  .booking-card{
+    max-width:520px; margin:0 auto 56px; text-align:left;
+    background:var(--panel); border:1px solid var(--line); padding:36px;
+  }
+  .booking-card h3{font-size:18px; margin-bottom:22px; text-align:center;}
+  .form-row{margin-bottom:16px;}
+  .form-row label{
+    display:block; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--gray-dim);
+    text-transform:uppercase; letter-spacing:0.08em; margin-bottom:7px;
+  }
+  .form-row input, .form-row select, .form-row textarea{
+    width:100%; background:var(--panel-2); border:1px solid var(--line); color:var(--white);
+    padding:12px 14px; font-family:'Montserrat',sans-serif; font-size:14px; border-radius:2px;
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  .form-row-2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .hp-field{position:absolute; left:-9999px; top:-9999px;}
+  .form-submit{width:100%; justify-content:center; margin-top:6px; cursor:pointer; border:none;}
+  .form-submit:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .form-status{font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:14px; text-align:center; min-height:16px;}
+  .form-status.ok{color:#3FA95A;}
+  .form-status.err{color:#D64545;}
+
+  .social-row{display:flex; justify-content:center; gap:20px; margin-bottom:40px;}
+  .social-card{
+    display:flex; align-items:center; gap:10px; padding:13px 20px;
+    border:1px solid var(--line); font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--gray); transition:all .2s ease;
+  }
+  .social-card svg{width:17px; height:17px; flex-shrink:0;}
+  .social-card:hover{border-color:var(--orange); color:var(--white); transform:translateY(-2px);}
+
+  footer{
+    border-top:1px solid var(--line); padding:26px 0;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+  }
+  footer .f-brand{display:flex; align-items:center; gap:10px;}
+  footer .f-brand svg{width:18px; height:18px;}
+  footer .f-brand span{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gray-dim);}
+  footer .f-note{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--gray-dim);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#top" class="nav-brand">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M88 14 L112 14 L194 186 L150 186 L100 62 L50 186 L6 186 Z" fill="#F4F4F2"/><path d="M34 127 L166 127 L176 149 L24 149 Z" fill="#C6602C"/><rect x="84" y="106" width="32" height="21" fill="#2A73FF"/><text x="100" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#F4F4F2">AI</text></svg>
+      <div class="nav-brand-text">
+        <span class="t">ATS</span>
+        <span class="s">Automotive Tech Solutions</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#arsenal">Arsenal</a>
+      <a href="#coverage">Coverage</a>
+      <a href="#location">Location</a>
+      <div class="nav-social">
+        <a href="https://www.instagram.com/mostafa_hassan_tech" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@mosa_tech" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v10.5a3.5 3.5 0 1 1-3-3.47"/><path d="M14 3c.5 2.4 2.2 4 5 4.3"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@mosa-tech" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.2v5.6l5-2.8z" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div id="top"></div>
+<header class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Sharjah, UAE — Now Booking</span>
+      <h1>Read the signal. <em>Fix the source.</em></h1>
+      <p class="lede">Advanced diagnostics, key programming, and ECU bench work for premium European and mainstream vehicles — run out of Al Nokhba Al Zahbia workshop, Sharjah.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Book a diagnostic</a>
+        <a href="#capabilities" class="btn btn-outline">See capabilities</a>
+      </div>
+      <div class="hero-meta">
+        <div><span class="val">6</span><span class="lbl">OEM groups covered</span></div>
+        <div><span class="val">4</span><span class="lbl">Service lines</span></div>
+        <div><span class="val">AKL</span><span class="lbl">European all-keys-lost</span></div>
+      </div>
+    </div>
+    <div class="hero-mark-col">
+      <svg viewBox="0 0 200 200" aria-label="ATS mark">
+        <path d="M88 14 L112 14 L194 186 L150 186 L100 62 L50 186 L6 186 Z" fill="#F4F4F2"/>
+        <path d="M34 127 L166 127 L176 149 L24 149 Z" fill="#C6602C"/>
+        <rect x="84" y="106" width="32" height="21" fill="#2A73FF"/>
+        <text x="100" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#F4F4F2">AI</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="trace" id="trace1">
+  <svg viewBox="0 0 1200 56" preserveAspectRatio="none">
+    <path d="M0,28 L120,28 L145,10 L170,46 L195,28 L340,28 L365,4 L385,50 L410,28 L620,28 L645,16 L665,40 L690,28 L900,28 L925,8 L945,48 L970,28 L1200,28" />
+    <path class="pulse" d="M0,28 L120,28 L145,10 L170,46 L195,28 L340,28 L365,4 L385,50 L410,28 L620,28 L645,16 L665,40 L690,28 L900,28 L925,8 L945,48 L970,28 L1200,28" stroke-dasharray="6 1400" />
+  </svg>
+</div>
+
+<section id="capabilities">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Service Lines</span>
+        <h2>Four disciplines, one bench.</h2>
+      </div>
+      <p>Starting prices — final quote scoped to vehicle class and fault complexity.</p>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-card accent-blue">
+        <span class="cap-code">DIAG</span>
+        <h3>Diagnostics</h3>
+        <p>Full system scan, live data streaming, and DTC root-cause analysis — runs on any modern vehicle, all makes.</p>
+        <div class="cap-price">Starts from AED 150<span class="note">Per session</span></div>
+      </div>
+      <div class="cap-card accent-orange">
+        <span class="cap-code">KEY</span>
+        <h3>Key Programming</h3>
+        <p>Remote and smart key coding, EEPROM cloning, and all-keys-lost recovery.</p>
+        <div class="cap-price">Starts from AED 500<span class="note">AKL available</span></div>
+      </div>
+      <div class="cap-card accent-blue">
+        <span class="cap-code">ECU</span>
+        <h3>Bench Work</h3>
+        <p>Off-vehicle ECU cloning, virgin unit programming, and module data transfer for write-protected units.</p>
+        <div class="cap-price">Starts from AED 500<span class="note">Per module</span></div>
+      </div>
+      <div class="cap-card accent-orange">
+        <span class="cap-code">ADAS</span>
+        <h3>Calibration</h3>
+        <p>Camera and radar calibration for driver-assist systems following glass, bumper, or suspension work.</p>
+        <div class="cap-price">Starts from AED 500<span class="note">Phase 2 — launching soon</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" id="trace2">
+  <svg viewBox="0 0 1200 56" preserveAspectRatio="none">
+    <path d="M0,28 L200,28 L220,44 L250,12 L280,28 L500,28 L520,6 L545,50 L575,28 L780,28 L805,20 L825,36 L850,28 L1050,28 L1075,10 L1095,46 L1120,28 L1200,28" />
+    <path class="pulse" d="M0,28 L200,28 L220,44 L250,12 L280,28 L500,28 L520,6 L545,50 L575,28 L780,28 L805,20 L825,36 L850,28 L1050,28 L1075,10 L1095,46 L1120,28 L1200,28" stroke-dasharray="6 1400" />
+  </svg>
+</div>
+
+<section id="arsenal">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Bench Arsenal</span>
+        <h2>Tools already on the floor.</h2>
+      </div>
+      <p>No rentals, no outsourced steps. Every job runs on owned hardware.</p>
+    </div>
+    <div class="tool-list">
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>BMW ISTA</h4><p class="desc">Factory diagnostic, programming, and coding software for BMW and MINI.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>Mercedes-Benz XENTRY</h4><p class="desc">Factory diagnostic and programming software for Mercedes-Benz.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>VAG ODIS</h4><p class="desc">Factory diagnostic software for Volkswagen Group platforms.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>Porsche PIWIS</h4><p class="desc">Factory diagnostic and programming software for Porsche.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>JLR Pathfinder</h4><p class="desc">Factory diagnostic and programming software for Jaguar Land Rover.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/><path d="M7 8l3 2-3 2M13 12h4"/></svg>
+        <div><h4>Lexus Techstream</h4><p class="desc">Factory diagnostic software for Toyota and Lexus.</p></div>
+        <span class="status">Factory Software</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M7 21h10M9 17v4M15 17v4"/><path d="M6 9h5M6 12h3"/></svg>
+        <div><h4>Autel MaxiSYS</h4><p class="desc">Flagship diagnostic platform — full-system scan and bi-directional control.</p></div>
+        <span class="status">Diagnostics</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 4v16M4 9h5"/><circle cx="15" cy="14" r="2"/></svg>
+        <div><h4>Autel MaxiIM</h4><p class="desc">Dedicated key and remote programming station.</p></div>
+        <span class="status">Key Programming</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="6" width="18" height="12" rx="1.5"/><path d="M7 6v-1a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1M8 11h8M8 14h5"/></svg>
+        <div><h4>OBDSTAR</h4><p class="desc">Bench-mode ECU and EEPROM read-write for locked or damaged modules.</p></div>
+        <span class="status">Bench Work</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
+        <div><h4>Xhorse Multi-Prog</h4><p class="desc">Immobilizer and module programming across multiple OEM protocols.</p></div>
+        <span class="status">Key / Bench</span>
+      </div>
+      <div class="tool-row">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 19V5a1 1 0 0 1 1-1h11l4 4v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M8 8h6M8 12h8M8 16h5"/></svg>
+        <div><h4>ALLDATA Online</h4><p class="desc">OEM repair procedures and wiring diagram reference library.</p></div>
+        <span class="status">Reference</span>
+      </div>
+    </div>
+
+    <div class="roadmap-strip">
+      <div class="rm"><span class="m">Month 3</span>KESS3</div>
+      <div class="rm"><span class="m">Month 4</span>Autel ADAS System</div>
+      <div class="rm"><span class="m">Month 6</span>FLEX</div>
+      <div class="rm"><span class="m">Month 8</span>Micro-soldering Station</div>
+      <div class="rm"><span class="m">Month 9</span>Mobile Unit</div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" id="trace3">
+  <svg viewBox="0 0 1200 56" preserveAspectRatio="none">
+    <path d="M0,28 L150,28 L170,14 L195,42 L220,28 L450,28 L470,50 L495,6 L520,28 L700,28 L722,18 L745,38 L768,28 L980,28 L1002,10 L1025,46 L1050,28 L1200,28" />
+    <path class="pulse" d="M0,28 L150,28 L170,14 L195,42 L220,28 L450,28 L470,50 L495,6 L520,28 L700,28 L722,18 L745,38 L768,28 L980,28 L1002,10 L1025,46 L1050,28 L1200,28" stroke-dasharray="6 1400" />
+  </svg>
+</div>
+
+<section id="coverage">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// OEM Coverage</span>
+        <h2>Platform coverage on file.</h2>
+      </div>
+      <p>Diagnostics run on any modern vehicle, all makes. Groups below reflect deeper coverage — factory software, key programming, and module-level bench work.</p>
+    </div>
+    <div class="oem-groups">
+      <div class="oem-group">
+        <span class="oem-group-label">BMW Group</span>
+        <div class="oem-group-row">
+          <div class="oem-badge"><div class="oem-glyph">BMW</div><span class="oem-name">BMW</span></div>
+          <div class="oem-badge"><div class="oem-glyph">MINI</div><span class="oem-name">MINI</span></div>
+          <div class="oem-badge"><div class="oem-glyph">R·R</div><span class="oem-name">Rolls-Royce</span></div>
+        </div>
+      </div>
+      <div class="oem-group">
+        <span class="oem-group-label">Mercedes-Benz Group</span>
+        <div class="oem-group-row">
+          <div class="oem-badge"><div class="oem-glyph">MB</div><span class="oem-name">Mercedes-Benz</span></div>
+          <div class="oem-badge"><div class="oem-glyph">MYB</div><span class="oem-name">Maybach</span></div>
+          <div class="oem-badge"><div class="oem-glyph">SMT</div><span class="oem-name">Smart</span></div>
+        </div>
+      </div>
+      <div class="oem-group">
+        <span class="oem-group-label">Volkswagen Group</span>
+        <div class="oem-group-row">
+          <div class="oem-badge"><div class="oem-glyph">VW</div><span class="oem-name">Volkswagen</span></div>
+          <div class="oem-badge"><div class="oem-glyph">AUDI</div><span class="oem-name">Audi</span></div>
+          <div class="oem-badge"><div class="oem-glyph">PSC</div><span class="oem-name">Porsche</span></div>
+          <div class="oem-badge"><div class="oem-glyph">BNT</div><span class="oem-name">Bentley</span></div>
+          <div class="oem-badge"><div class="oem-glyph">LMB</div><span class="oem-name">Lamborghini</span></div>
+        </div>
+      </div>
+      <div class="oem-group">
+        <span class="oem-group-label">Toyota Group</span>
+        <div class="oem-group-row">
+          <div class="oem-badge"><div class="oem-glyph">TYT</div><span class="oem-name">Toyota</span></div>
+          <div class="oem-badge"><div class="oem-glyph">LEXUS</div><span class="oem-name">Lexus</span></div>
+        </div>
+      </div>
+      <div class="oem-group">
+        <span class="oem-group-label">Independent</span>
+        <div class="oem-group-row">
+          <div class="oem-badge"><div class="oem-glyph">MAS</div><span class="oem-name">Maserati</span></div>
+          <div class="oem-badge"><div class="oem-glyph">RNG</div><span class="oem-name">Range Rover</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="location">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// On The Bench</span>
+        <h2>Where the work happens.</h2>
+      </div>
+    </div>
+    <div class="loc-grid">
+      <div class="loc-info">
+        <h3>Al Nokhba Al Zahbia Workshop</h3>
+        <p class="addr">Saqr Industrial Area (Sagaa), Sharjah, United Arab Emirates</p>
+        <div class="loc-row"><span class="k">Hours</span><span>Sat – Thu, 9:00 – 19:00</span></div>
+        <div class="loc-row"><span class="k">Booking</span><span>By appointment</span></div>
+        <div class="loc-row"><span class="k">Vehicles</span><span>All makes, European specialty</span></div>
+      </div>
+      <div class="loc-map">
+        <div class="loc-pin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+          <span>Saqr / Sagaa Industrial Area<br>Sharjah, UAE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <div class="wrap">
+    <span class="section-tag" style="justify-content:center; display:flex;">// Get In Touch</span>
+    <h2>Bring us the fault code.</h2>
+    <p>Send the details below and we'll get back to you, or DM on Instagram for the fastest response.</p>
+
+    <div class="booking-card">
+      <h3>Request a booking</h3>
+      <form id="booking-form" novalidate>
+        <div class="form-row">
+          <label for="bf-name">Name</label>
+          <input type="text" id="bf-name" name="name" required maxlength="120" autocomplete="name">
+        </div>
+        <div class="form-row-2">
+          <div class="form-row">
+            <label for="bf-phone">Phone</label>
+            <input type="tel" id="bf-phone" name="phone" required maxlength="40" autocomplete="tel" placeholder="+971 5X XXX XXXX">
+          </div>
+          <div class="form-row">
+            <label for="bf-service">Service</label>
+            <select id="bf-service" name="service_code">
+              <option value="DIAG">Diagnostics</option>
+              <option value="KEY">Key Programming</option>
+              <option value="ECU">Bench Work</option>
+              <option value="ADAS">ADAS Calibration</option>
+              <option value="OTHER">Other / Not sure</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="bf-vehicle">Vehicle (make, model, year)</label>
+          <input type="text" id="bf-vehicle" name="vehicle" maxlength="160" placeholder="e.g. 2019 BMW X5 G05">
+        </div>
+        <div class="form-row">
+          <label for="bf-message">What's going on?</label>
+          <textarea id="bf-message" name="message" rows="3" maxlength="1000" placeholder="Fault symptoms, warning lights, when it started..."></textarea>
+        </div>
+        <!-- honeypot — left blank by real users, hidden from view -->
+        <div class="form-row hp-field" aria-hidden="true">
+          <label for="bf-hp">Leave blank</label>
+          <input type="text" id="bf-hp" name="hp_field" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary form-submit" id="bf-submit">Send request</button>
+        <div class="form-status" id="bf-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <div class="social-row">
+      <a class="social-card" href="https://www.instagram.com/mostafa_hassan_tech" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+        @mostafa_hassan_tech
+      </a>
+      <a class="social-card" href="https://www.tiktok.com/@mosa_tech" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v10.5a3.5 3.5 0 1 1-3-3.47"/><path d="M14 3c.5 2.4 2.2 4 5 4.3"/></svg>
+        @mosa_tech
+      </a>
+      <a class="social-card" href="https://www.youtube.com/@mosa-tech" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.2v5.6l5-2.8z" fill="currentColor" stroke="none"/></svg>
+        @mosa-tech
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; width:100%;">
+    <div class="f-brand">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M88 14 L112 14 L194 186 L150 186 L100 62 L50 186 L6 186 Z" fill="#8B8E95"/><path d="M34 127 L166 127 L176 149 L24 149 Z" fill="#8B8E95"/></svg>
+      <span>ATS — Automotive Tech Solutions © 2026</span>
+    </div>
+    <span class="f-note">Sharjah, UAE</span>
+  </div>
+</footer>
+
+<script>
+  // Auto-detects: same-origin when served by the backend (e.g. deployed on Render),
+  // falls back to localhost:4000 when opened directly as a file for local testing.
+  const API_BASE = (location.protocol === 'file:') ? "http://localhost:4000" : "";
+
+  const traces = document.querySelectorAll('.trace');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); } });
+  }, {threshold:0.3});
+  traces.forEach(t => io.observe(t));
+
+  // ---- dynamic content: services & OEM coverage pulled from the backend ----
+  // If the backend is unreachable, the static content already in the HTML stays as-is.
+
+  async function loadServices() {
+    try {
+      const res = await fetch(`${API_BASE}/api/services`);
+      if (!res.ok) return;
+      const services = await res.json();
+      if (!Array.isArray(services) || services.length === 0) return;
+
+      const grid = document.querySelector('.cap-grid');
+      grid.innerHTML = services.map(s => `
+        <div class="cap-card accent-${s.accent === 'orange' ? 'orange' : 'blue'}">
+          <span class="cap-code">${escapeHtml(s.code)}</span>
+          <h3>${escapeHtml(s.title)}</h3>
+          <p>${escapeHtml(s.description)}</p>
+          <div class="cap-price">Starts from AED ${s.price_min}${s.note ? `<span class="note">${escapeHtml(s.note)}</span>` : ''}</div>
+        </div>
+      `).join('');
+
+      // keep the booking form's service dropdown in sync with live services
+      const select = document.getElementById('bf-service');
+      if (select) {
+        const otherOpt = '<option value="OTHER">Other / Not sure</option>';
+        select.innerHTML = services.map(s => `<option value="${escapeHtml(s.code)}">${escapeHtml(s.title)}</option>`).join('') + otherOpt;
+      }
+    } catch (e) { /* backend not reachable — static content stays */ }
+  }
+
+  // known monogram treatments — falls back to an auto-generated 3-letter glyph
+  // for any brand added later via the admin panel that isn't in this list
+  const OEM_MONOGRAMS = {
+    "BMW": "BMW", "MINI": "MINI", "Rolls-Royce": "R\u00b7R",
+    "Mercedes-Benz": "MB", "Maybach": "MYB", "Smart": "SMT",
+    "Volkswagen": "VW", "Audi": "AUDI", "Porsche": "PSC",
+    "Bentley": "BNT", "Lamborghini": "LMB",
+    "Toyota": "TYT", "Lexus": "LEXUS",
+    "Maserati": "MAS", "Range Rover": "RNG",
+  };
+  function monogramFor(name) {
+    if (OEM_MONOGRAMS[name]) return OEM_MONOGRAMS[name];
+    const letters = name.replace(/[^A-Za-z]/g, '');
+    return (letters.slice(0, 3) || name.slice(0, 3)).toUpperCase();
+  }
+
+  async function loadOem() {
+    try {
+      const res = await fetch(`${API_BASE}/api/oem`);
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (!Array.isArray(rows) || rows.length === 0) return;
+
+      const groups = {};
+      const order = [];
+      rows.forEach(r => {
+        const g = r.group_name || 'Coverage';
+        if (!groups[g]) { groups[g] = []; order.push(g); }
+        groups[g].push(r.name);
+      });
+
+      const container = document.querySelector('.oem-groups');
+      container.innerHTML = order.map(g => `
+        <div class="oem-group">
+          <span class="oem-group-label">${escapeHtml(g)}</span>
+          <div class="oem-group-row">
+            ${groups[g].map(name => `
+              <div class="oem-badge">
+                <div class="oem-glyph">${escapeHtml(monogramFor(name))}</div>
+                <span class="oem-name">${escapeHtml(name)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    } catch (e) { /* backend not reachable — static content stays */ }
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+  }
+
+  loadServices();
+  loadOem();
+
+  // ---- booking form submission ----
+  const bookingForm = document.getElementById('booking-form');
+  const bfStatus = document.getElementById('bf-status');
+  const WHATSAPP_NUMBER = '971558329858';
+
+  bookingForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    bfStatus.textContent = '';
+    bfStatus.className = 'form-status';
+
+    if (document.getElementById('bf-hp').value) {
+      return; // honeypot tripped, silently ignore
+    }
+
+    const name = document.getElementById('bf-name').value.trim();
+    const phone = document.getElementById('bf-phone').value.trim();
+    const vehicle = document.getElementById('bf-vehicle').value.trim();
+    const serviceSelect = document.getElementById('bf-service');
+    const service = serviceSelect.options[serviceSelect.selectedIndex].text;
+    const message = document.getElementById('bf-message').value.trim();
+
+    if (!name || name.length < 2) {
+      bfStatus.textContent = 'Please enter your name.';
+      bfStatus.className = 'form-status err';
+      return;
+    }
+    if (!phone || phone.length < 6) {
+      bfStatus.textContent = 'Please enter a valid phone number.';
+      bfStatus.className = 'form-status err';
+      return;
+    }
+
+    const lines = [
+      `Booking request — ${service}`,
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+    ];
+    if (vehicle) lines.push(`Vehicle: ${vehicle}`);
+    if (message) lines.push(`Details: ${message}`);
+
+    const waText = encodeURIComponent(lines.join('\n'));
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waText}`, '_blank', 'noopener');
+
+    bfStatus.textContent = 'Opening WhatsApp…';
+    bfStatus.className = 'form-status ok';
+    bookingForm.reset();
+  });
+</script>
+
+</body>
+</html>
