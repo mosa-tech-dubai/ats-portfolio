@@ -1,0 +1,7 @@
+# Videographer agent — generated outputs and local secrets, never committed
+The-Link/04_PILOT/videographer_agent/shots/*.mp4
+The-Link/04_PILOT/videographer_agent/shots/*.png
+The-Link/04_PILOT/videographer_agent/shots/manifest.json
+!The-Link/04_PILOT/videographer_agent/shots/.gitkeep
+.env
+*.env

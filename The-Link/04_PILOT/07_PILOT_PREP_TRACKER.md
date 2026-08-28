@@ -84,3 +84,7 @@ Adds to `04_PILOT/04_PILOT_SHOT_LIST.md`'s general checklist, specific to this l
 5. Who handles consent/release for any customer vehicle or job sheet shown on camera?
 
 Once these five are answered, this tracker can move from `STATUS: In Progress` to `STATUS: Ready to Shoot`, and the checklist above should be fully checked off.
+
+## AI Previs (Optional, Before the Real Shoot)
+
+`04_PILOT/videographer_agent/` holds a self-hosted AI video generation setup (a Claude Code subagent + scripts driving a rented RunPod GPU running ComfyUI) for generating a rough "Diagnostic Detective" concept trailer — 13 shots, generic/placeholder identity, not the real specialist — to previsualize tone and pacing before committing a shoot day. See its `README.md` for setup. This is a visualization aid only: it does not replace or block any of the five open items above, and none of it has been run yet (requires a RunPod account/API key and a one-time manual ComfyUI workflow build — both still outstanding).
