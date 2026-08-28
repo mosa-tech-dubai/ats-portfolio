@@ -1,5 +1,5 @@
 STATUS: In Progress
-VERSION: 1.0
+VERSION: 1.1
 LAST UPDATED: 2026-08-28
 OWNER: Founder
 
@@ -87,4 +87,12 @@ Once these five are answered, this tracker can move from `STATUS: In Progress` t
 
 ## AI Previs (Optional, Before the Real Shoot)
 
-`04_PILOT/videographer_agent/` holds a self-hosted AI video generation setup (a Claude Code subagent + scripts driving a rented RunPod GPU running ComfyUI) for generating a rough "Diagnostic Detective" concept trailer — 13 shots, generic/placeholder identity, not the real specialist — to previsualize tone and pacing before committing a shoot day. See its `README.md` for setup. This is a visualization aid only: it does not replace or block any of the five open items above, and none of it has been run yet (requires a RunPod account/API key and a one-time manual ComfyUI workflow build — both still outstanding).
+Goal: previsualize the "Diagnostic Detective" concept trailer — 13 shots, generic/placeholder identity, not the real specialist — to test tone and pacing before committing a shoot day. This is a visualization aid only: it does not replace or block any of the five open items above.
+
+**Active path (chosen 2026-08-28): free-tier consumer web tools, zero spend.** Founder decided not to commit any money (RunPod GPU rental or otherwise) until the pilot itself proves out ROI. Plan:
+
+1. Generate the character reference still (`character_reference_prompt` in `04_PILOT/videographer_agent/shot_list.json`) via a free, cardless image tool (e.g. Bing Image Creator/Copilot Designer).
+2. Run the 13 shots in `shot_list.json` through a free-tier video generator with a daily no-cost credit allowance and no card required (e.g. Pika, Kling — verify current limits at signup, they move) — text-to-video for the 7 shots with `needs_reference: false`, image-to-video with the reference still for the 6 with `needs_reference: true`.
+3. Download and stitch the clips in a free editor (CapCut, DaVinci Resolve Free) for a rough assembled trailer.
+
+**Deferred path: self-hosted RunPod + ComfyUI pipeline.** `04_PILOT/videographer_agent/` still holds the full self-hosted setup (Claude Code subagent + scripts, near-zero marginal cost per clip once running) — worth revisiting once the pilot validates the format and content volume justifies infra investment, not before. Nothing in it has been run; it still needs a RunPod account/API key and a one-time manual ComfyUI workflow build. The RunPod MCP server (`runpod`) is registered locally for this project but not yet connected (needs `RUNPOD_API_KEY`, not currently set).
