@@ -1,6 +1,6 @@
 STATUS: Approved
-VERSION: 1.0
-LAST UPDATED: 2026-08-26
+VERSION: 1.1
+LAST UPDATED: 2026-08-28
 OWNER: Founder
 
 # Pilot Objectives
@@ -43,6 +43,10 @@ A strong initial pilot candidate is a BMW specialist garage, because:
 - The episode can produce many short-form clips.
 
 **The BMW episode must not become a BMW advertisement.** It is the environment for testing the larger The Link concept — the choice of guest matters far less than what the team learns from producing and releasing it. If a different guest with equally strong access and story potential becomes available before the pilot, they are an acceptable substitute; the BMW-specialist framing is an example, not a requirement.
+
+## Pilot Guest: Locked
+
+**The pilot guest is ATS / Ignite Auto Garage, Dubai, UAE** — an automotive diagnostics and ECU/EEPROM programming specialist, a narrower and arguably stronger test of the format than a generalist BMW mechanic (see `00_PROJECT_BIBLE/04_DECISION_PRINCIPLES.md`'s Portability Test: if this format works for a specialized diagnostics/ECU workflow, it should transfer even more easily to broader automotive guests, and eventually other verticals). Live pre-production tracking, the guest-specific question plan, and the open logistics items still needed before shoot day are in `07_PILOT_PREP_TRACKER.md`.
 
 ## Success Criteria
 

@@ -1,6 +1,6 @@
 STATUS: Living Document
-VERSION: 1.0
-LAST UPDATED: 2026-08-26
+VERSION: 1.1
+LAST UPDATED: 2026-08-28
 OWNER: Founder
 
 # Project Status
@@ -24,9 +24,11 @@ The living snapshot of what's decided, in progress, open, and future for The Lin
 - The pilot is a test lab for the entire system, not simply "Episode 1."
 - Core philosophy: Experience + Story + Discovery + Connection + Value.
 - Any monetization must remain compatible with audience trust.
+- The pilot guest is locked: ATS / Ignite Auto Garage, Dubai, UAE (automotive diagnostics / ECU-EEPROM programming specialty). See `04_PILOT/01_PILOT_OBJECTIVES.md` and the live tracker at `04_PILOT/07_PILOT_PREP_TRACKER.md`.
 
 ## IN PROGRESS
 
+- Pilot pre-production (`04_PILOT/07_PILOT_PREP_TRACKER.md`) — guest locked; still open: on-camera specialist, shoot date, hero case, end-card info, and consent process. See the tracker for the full checklist.
 - Pilot planning (`04_PILOT/`) — objectives, structure, question plan, and shot list drafted; pilot has not yet been shot.
 - Episode System documentation (`03_EPISODE_SYSTEM/`) — structure, interview framework, question bank, highlight system approved as v1; expected to be refined after the pilot.
 - Production and post-production documentation (`05_PRODUCTION/`, `06_POST_PRODUCTION/`) — principle-level guidance drafted; several specifics (audio/camera equipment, delivery specs) intentionally deferred pending real-world pilot data.
