@@ -1,5 +1,5 @@
 STATUS: In Progress
-VERSION: 1.1
+VERSION: 1.2
 LAST UPDATED: 2026-08-28
 OWNER: Founder
 
@@ -89,10 +89,11 @@ Once these five are answered, this tracker can move from `STATUS: In Progress` t
 
 Goal: previsualize the "Diagnostic Detective" concept trailer — 13 shots, generic/placeholder identity, not the real specialist — to test tone and pacing before committing a shoot day. This is a visualization aid only: it does not replace or block any of the five open items above.
 
-**Active path (chosen 2026-08-28): free-tier consumer web tools, zero spend.** Founder decided not to commit any money (RunPod GPU rental or otherwise) until the pilot itself proves out ROI. Plan:
+**Active path (updated 2026-08-28): local previs, zero spend, zero infra.** Founder decided not to commit any money (RunPod GPU rental or otherwise) until the pilot itself proves out ROI — and the local machine checked has no CUDA-capable GPU (Intel UHD 620 integrated graphics), which rules out true local AI video generation at any resolution. `04_PILOT/videographer_agent/scripts/local_previs.py` sidesteps that: it synthesizes Ken Burns pan/zoom motion over still images with ffmpeg, entirely CPU-only, no GPU needed at all. Built and tested (13-shot batch renders and stitches correctly, ~17s on a modern CPU; will run slower but will complete on weaker hardware since nothing here needs a GPU).
 
-1. Generate the character reference still (`character_reference_prompt` in `04_PILOT/videographer_agent/shot_list.json`) via a free, cardless image tool (e.g. Bing Image Creator/Copilot Designer).
-2. Run the 13 shots in `shot_list.json` through a free-tier video generator with a daily no-cost credit allowance and no card required (e.g. Pika, Kling — verify current limits at signup, they move) — text-to-video for the 7 shots with `needs_reference: false`, image-to-video with the reference still for the 6 with `needs_reference: true`.
-3. Download and stitch the clips in a free editor (CapCut, DaVinci Resolve Free) for a rough assembled trailer.
+1. Generate one still image per shot (any free image tool — Bing Image Creator/Copilot Designer works, no card needed) using the prompts already in `shot_list.json`; use `character_reference_prompt` for the 6 shots marked `needs_reference: true`, or share one reference still across all of them via `stills/character_reference.png`.
+2. Save each still to `04_PILOT/videographer_agent/stills/<shot_id>.png`.
+3. Run `python scripts/local_previs.py --shot-list shot_list.json --stills-dir stills --out-dir shots --resolution 640x360` — see the kit's `README.md`, "Mode A."
+4. Review `shots/trailer_previs.mp4`. `shots/manifest.json` logs each shot's still, pan parameters, and original AI-video prompt for the future hi-res pass.
 
-**Deferred path: self-hosted RunPod + ComfyUI pipeline.** `04_PILOT/videographer_agent/` still holds the full self-hosted setup (Claude Code subagent + scripts, near-zero marginal cost per clip once running) — worth revisiting once the pilot validates the format and content volume justifies infra investment, not before. Nothing in it has been run; it still needs a RunPod account/API key and a one-time manual ComfyUI workflow build. The RunPod MCP server (`runpod`) is registered locally for this project but not yet connected (needs `RUNPOD_API_KEY`, not currently set).
+**Deferred path: RunPod + ComfyUI real AI video generation ("Mode B" in the kit).** Worth revisiting once the pilot validates the format and content volume justifies both the spend and the infra setup — not before. Nothing in it has been run; still needs a RunPod account/API key (blocked on a payment method — PayPal isn't confirmed accepted, see chat history) and a one-time manual ComfyUI workflow build. The RunPod MCP server (`runpod`) is registered locally for this project but not connected (needs `RUNPOD_API_KEY`, not currently set). Because Mode A's manifest already logs each shot's reference still, switching a specific shot to Mode B later means image-to-video from that same still, not starting over.

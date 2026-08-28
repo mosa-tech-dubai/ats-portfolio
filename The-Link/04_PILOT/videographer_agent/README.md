@@ -1,23 +1,75 @@
-# Videographer agent — self-hosted video generation for Claude Code
+# Videographer agent — video generation for Claude Code
 
-Drives an open-source video model (LTXVideo 13B by default) on a rented RunPod
-GPU pod instead of paying per-generation credits on Runway/Kling/etc. Real
-cost is hourly compute, not per-clip — roughly $0.34-0.74/hr on an RTX 4090
-(RunPod Community/Secure Cloud, verified Aug 2026 — check current pricing at
-runpod.io before you rely on this number, it moves).
+Two modes, pick based on budget and what you're testing:
+
+- **Local previs (default, free, no GPU needed)** — turns still images into a
+  low-res "fake motion" video per shot using ffmpeg's Ken Burns pan/zoom, on
+  any CPU, no CUDA, no cost, no account signup. Lower fidelity than real AI
+  video (the camera move is synthesized, not generated), but genuinely runs
+  anywhere and is the right tool for testing pacing/story order/tone before
+  spending anything. See "Mode A" below.
+- **RunPod + ComfyUI (real AI video, costs money)** — drives an open-source
+  video model (LTXVideo 13B by default) on a rented RunPod GPU pod instead of
+  paying per-generation credits on Runway/Kling/etc. Real cost is hourly
+  compute, not per-clip — roughly $0.34-0.74/hr on an RTX 4090 (RunPod
+  Community/Secure Cloud, verified Aug 2026 — check current pricing at
+  runpod.io before you rely on this number, it moves). Worth it once you're
+  generating content regularly enough that near-zero marginal cost per clip
+  matters more than the setup overhead. See "Mode B" below.
+
+Every shot rendered in Mode A logs its source still, pan parameters, and the
+original AI-video prompt to `shots/manifest.json` — so switching to Mode B
+later for a specific shot means image-to-video using that same still as the
+reference frame, not starting over.
 
 ## What's in here
 
 ```
-.claude/agents/videographer.md   the Claude Code subagent definition
-scripts/comfyui_client.py        thin wrapper around ComfyUI's HTTP API
-scripts/generate_shots.py        batch-runs shot_list.json against a pod
-shot_list.json                   the "Diagnostic Detective" trailer, 13 shots
-workflows/                       EMPTY — see step 3, this can't be pre-built for you
-shots/                           generated clips + manifest.json land here
+.claude/agents/videographer.md      the Claude Code subagent definition
+scripts/local_previs.py             Mode A: ffmpeg pan/zoom from stills, free, no GPU
+scripts/comfyui_client.py           Mode B: thin wrapper around ComfyUI's HTTP API
+scripts/generate_shots.py           Mode B: batch-runs shot_list.json against a pod
+shot_list.json                      the "Diagnostic Detective" trailer, 13 shots
+stills/                             EMPTY — drop one image per shot here for Mode A
+workflows/                          EMPTY — see Mode B step 3, this can't be pre-built for you
+shots/                              generated clips + manifest.json land here
 ```
 
-## Setup (one-time)
+## Mode A: Local previs (start here, free, no GPU)
+
+1. **Get one still image per shot.** Any free image tool works (Bing Image
+   Creator/Copilot Designer, a free tier of Leonardo/Firefly, a photo, a
+   sketch — anything). Use the `character_reference_prompt` in
+   `shot_list.json` for a consistent look across the 6 shots marked
+   `needs_reference: true`, or just generate one still per shot independently
+   if you don't need character consistency for a first pass.
+2. **Save each still** to `stills/<shot_id>.png` (shot ids are in
+   `shot_list.json`, e.g. `stills/beat1_cold_open.png`). Shots with
+   `needs_reference: true` fall back to `stills/character_reference.png` if
+   no shot-specific still exists, so one reference image can cover all 6.
+3. **Run it:**
+   ```
+   pip install pillow   # only needed if you also script still generation; the
+                         # render step itself only needs ffmpeg + stdlib
+   python scripts/local_previs.py \
+     --shot-list shot_list.json \
+     --stills-dir stills \
+     --out-dir shots \
+     --resolution 640x360
+   ```
+   Needs `ffmpeg` on PATH (`ffmpeg -version` to check; install via your OS's
+   package manager or ffmpeg.org if missing — CPU-only build is fine, no
+   hardware acceleration required).
+4. Check `shots/trailer_previs.mp4` for the stitched rough cut, and
+   `shots/manifest.json` for per-shot status. Any shot missing a still is
+   reported by name and simply skipped, not silently dropped.
+
+Runs in well under a minute for all 13 shots on a modern CPU; expect longer
+on older/weaker hardware (e.g. a laptop with only integrated graphics), but
+it will finish — this path never touches the GPU at all, so "slower" is the
+worst case, not "won't run."
+
+## Mode B: RunPod + ComfyUI (real AI video, costs money)
 
 ### 1. Drop this into your Claude Code project
 
@@ -109,6 +161,16 @@ hand instead of through the agent.
 
 ## Honest limitations
 
+**Mode A (local previs):**
+- It's fake motion, not AI-generated motion — a pan/zoom over a static image,
+  not the camera move described in each shot's prompt. Fine for testing
+  pacing and story order; not a substitute for seeing whether the actual
+  described shot (e.g. "rack focus," "tracking shot") works visually.
+- Character consistency across shots is only as good as your reference still
+  and how well your image tool of choice respects it — same caveat as Mode B's
+  image-to-video trick, just one step further removed.
+
+**Mode B (RunPod + ComfyUI):**
 - First pod boot can take up to ~30 minutes while the model downloads,
   unless you attach a persistent network volume with the model pre-cached
   (worth doing if you'll run this weekly for @mosa_tech content).
