@@ -1,0 +1,98 @@
+{
+  "project": "The Diagnostic Detective — Pilot Trailer",
+  "character_reference_prompt": "Studio portrait, automotive mechatronics technician, early-to-mid 30s, medium build, short dark hair, light stubble, navy-blue workshop polo with subtle chest logo patch, nitrile gloves, calm focused expression, neutral garage background, soft key light, shot on 50mm, shallow depth of field.",
+  "aspect_ratio": "16:9",
+  "shots": [
+    {
+      "id": "beat1_cold_open",
+      "beat": "Cold Open",
+      "duration_s": 5,
+      "needs_reference": false,
+      "prompt": "Extreme close-up on a car dashboard, a single warning light glowing amber in a dim garage interior. Rack focus to a gloved hand plugging a diagnostic scanner into the OBD port below the steering column. Cinematic, shallow depth of field, slight handheld motion, warm practical lighting from a work lamp."
+    },
+    {
+      "id": "beat3_fast_intro",
+      "beat": "Fast Intro",
+      "duration_s": 8,
+      "needs_reference": false,
+      "prompt": "Wide establishing shot of a modern automotive diagnostics workshop bay — clean concrete floor, a European sedan on a hydraulic lift, tool walls, morning light cutting through a garage door. Slow continuous dolly-in over 8 seconds. Documentary style, natural light, slightly desaturated cinematic grade."
+    },
+    {
+      "id": "beat4_workbench_1",
+      "beat": "The Place",
+      "duration_s": 5,
+      "needs_reference": false,
+      "prompt": "Close tracking shot over a workbench: an EEPROM programmer with blinking LEDs in sharp focus, background soft. Slow lateral drift, tactile and textured, as if discovering the object for the first time."
+    },
+    {
+      "id": "beat4_workbench_2",
+      "beat": "The Place",
+      "duration_s": 5,
+      "needs_reference": true,
+      "prompt": "Close tracking shot across a workbench: a laptop screen showing live sensor data graphs scrolling, reflected light on a gloved hand adjusting the trackpad. Shallow focus, slight handheld motion."
+    },
+    {
+      "id": "beat4_workbench_3",
+      "beat": "The Place",
+      "duration_s": 5,
+      "needs_reference": true,
+      "prompt": "Close tracking shot: scattered job sheets and a multimeter on a workbench, a hand placing a probe down. Slow rack focus from foreground clutter to the multimeter's glowing display."
+    },
+    {
+      "id": "beat5_montage_1",
+      "beat": "Expertise Montage",
+      "duration_s": 4,
+      "needs_reference": false,
+      "prompt": "Extreme close-up, fault code readout scrolling fast on a diagnostic tablet screen, reflected light on lens. Static camera, screen glow only light source."
+    },
+    {
+      "id": "beat5_montage_2",
+      "beat": "Expertise Montage",
+      "duration_s": 4,
+      "needs_reference": false,
+      "prompt": "Extreme close-up on an EEPROM programmer's LED array cycling through read/write states. Macro lens look, shallow focus, slight rack focus across LEDs."
+    },
+    {
+      "id": "beat5_montage_3",
+      "beat": "Expertise Montage",
+      "duration_s": 4,
+      "needs_reference": false,
+      "prompt": "Close-up, oscilloscope waveform trace sweeping across screen in a dim workshop. Static camera, cool blue-green glow."
+    },
+    {
+      "id": "beat6_demo_1",
+      "beat": "Demonstration / Recognition",
+      "duration_s": 6,
+      "needs_reference": true,
+      "prompt": "Medium shot of the reference technician in a workshop polo, studying a laptop screen showing a scrolling fault-code readout, brow furrowed in concentration. Behind him, blurred garage activity. Natural window light, 35mm lens look."
+    },
+    {
+      "id": "beat6_demo_2",
+      "beat": "Demonstration / Recognition",
+      "duration_s": 4,
+      "needs_reference": true,
+      "prompt": "Close-up on the reference technician's face as concentration shifts to a flicker of recognition — eyes narrow slightly, faint nod. Natural light, same lens continuity as previous shot."
+    },
+    {
+      "id": "beat7_human_moment",
+      "beat": "Human Moment",
+      "duration_s": 5,
+      "needs_reference": true,
+      "prompt": "Candid medium shot: the reference technician leans back, laughs genuinely at something off-camera, wipes his hands on a shop rag. Warm, unposed, documentary handheld energy — not staged."
+    },
+    {
+      "id": "beat8_cta_1",
+      "beat": "Final Value / CTA",
+      "duration_s": 7,
+      "needs_reference": false,
+      "prompt": "Slow push-in on a car pulling out of the workshop bay into bright daylight, dashboard warning light now off, visible through the windshield. Optimistic, resolved lighting shift from cool interior to warm exterior."
+    },
+    {
+      "id": "beat8_cta_2",
+      "beat": "Final Value / CTA",
+      "duration_s": 5,
+      "needs_reference": false,
+      "prompt": "Static wide shot, empty daylight-lit workshop bay entrance, clean negative space in the lower third for a caption card. Slow, barely perceptible zoom — hold for text overlay in edit."
+    }
+  ]
+}
