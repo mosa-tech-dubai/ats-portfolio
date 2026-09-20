@@ -55,7 +55,7 @@ The ambition is not "build a successful podcast." It is to build a media and com
 
 ## Current Decisions (DECIDED)
 
-See `10_OPERATIONS/` and `PROJECT_STATUS.md` (project root) for the full living list. The headline decisions:
+See `10_OPERATIONS/` and `PROJECT_STATUS.md` (`The-Link/` root, not the git repo root) for the full living list. The headline decisions:
 
 - The project is bigger than a podcast.
 - The project is about real-world expertise and connection, not service advertising.
