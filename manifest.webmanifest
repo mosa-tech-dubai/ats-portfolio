@@ -1,0 +1,38 @@
+{
+  "name": "ATS Appraisal (Internal)",
+  "short_name": "ATS Appraisal",
+  "description": "Internal appraisal and inspection reference for ATS workshop use. Not for distribution.",
+  "start_url": "advisor.html",
+  "scope": "./",
+  "id": "/ats-advisor",
+  "display": "standalone",
+  "background_color": "#0C0F12",
+  "theme_color": "#0C0F12",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "automotive",
+    "business",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

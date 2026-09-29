@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ATS Appraisal — Internal</title>
+<meta name="description" content="Internal appraisal and inspection reference. Not for publication.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/advisor.css">
+
+<!-- Installable web app: home-screen icon, standalone window, works offline -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0C0F12">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATS Advisor">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#4A535C" stroke-width="1.5"/><g stroke="#4A535C" stroke-width="1.5"><line x1="50" y1="8" x2="50" y2="14"/><line x1="50" y1="86" x2="50" y2="92"/><line x1="8" y1="50" x2="14" y2="50"/><line x1="86" y1="50" x2="92" y2="50"/></g><path d="M 20 74 A 44 44 0 0 1 12 50" fill="none" stroke="#F2A93B" stroke-width="2" stroke-linecap="round"/><text x="50" y="59" text-anchor="middle" font-family="Oswald, Arial Narrow, sans-serif" font-weight="700" font-size="22" fill="#ECE8E0">ATS</text></svg>
+      <div class="nav-brand-text">
+        <span class="t">ATS</span>
+        <span class="s">Automotive Tech Solutions</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#advisor" class="active">Appraise</a>
+      <a href="#process">Transfer</a>
+      <a href="#flags">Walk away</a>
+      <span class="cta-static">INTERNAL</span>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <span class="eyebrow">Internal — ATS workshop use only</span>
+    <h1>Price the car <em>after</em> it is on the lift. Never before.</h1>
+    <p class="lede">Appraisal and inspection reference for the bench. Known faults by
+    platform in UAE heat, what to put on the scanner, and an indicative value to argue
+    from — not a number to hand a customer. Works offline once installed.</p>
+    <div class="standing-rule">
+      <strong>Standing rule.</strong> No figure from this tool goes to a customer before
+      the vehicle has been inspected and scanned. A desk estimate either costs them money
+      or costs us the referral.
+    </div>
+    <div class="hero-actions">
+      <a href="#advisor" class="btn btn-primary">Open the tool</a>
+      <a href="#flags" class="btn btn-outline">Walk-away triggers</a>
+      <button type="button" id="install-btn" class="btn btn-outline" hidden>Install app</button>
+    </div>
+    <div class="hero-meta">
+      <div><span class="val">24</span><span class="lbl">Platforms on file</span></div>
+      <div><span class="val">PPI</span><span class="lbl">Inspection + full module scan</span></div>
+      <div><span class="val">ROPS</span><span class="lbl">Cabrio scan target</span></div>
+      <div><span class="val">T-052</span><span class="lbl">Dealer calls outstanding</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ======================= ADVISOR ======================= -->
+<section id="advisor" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Appraisal</span>
+        <h2>Which side is the job.</h2>
+      </div>
+      <p>Both run off <span class="mono">data/models.json</span> — what actually fails on each platform in this climate, and what it costs to put right.</p>
+    </div>
+
+    <div class="mode-switch" role="tablist" aria-label="Buyer or seller">
+      <button role="tab" data-tab="buy" aria-selected="true">Pre-purchase</button>
+      <button role="tab" data-tab="sell" aria-selected="false">Sell-Ready</button>
+    </div>
+
+    <!-- ---------- BUYER ---------- -->
+    <div data-panel="buy">
+      <div class="tool-panel">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label for="bv-budget">Budget ceiling — <span class="val-out" id="bv-budget-out">AED 90,000</span></label>
+            <input type="range" id="bv-budget" min="20000" max="350000" step="5000" value="90000">
+            <span class="hint">All-in, before transfer and insurance.</span>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Body style</label>
+          <div class="chip-row">
+            <button class="chip" data-group="body" data-value="any" aria-pressed="true">Any</button>
+            <button class="chip" data-group="body" data-value="suv" aria-pressed="false">SUV</button>
+            <button class="chip" data-group="body" data-value="sedan" aria-pressed="false">Sedan</button>
+            <button class="chip" data-group="body" data-value="hatch" aria-pressed="false">Hatch</button>
+            <button class="chip" data-group="body" data-value="pickup" aria-pressed="false">Pickup</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Primary use</label>
+          <div class="chip-row">
+            <button class="chip" data-group="use" data-value="family" aria-pressed="true">Family duty</button>
+            <button class="chip" data-group="use" data-value="city" aria-pressed="false">City / commute</button>
+            <button class="chip" data-group="use" data-value="highway" aria-pressed="false">Long highway runs</button>
+            <button class="chip" data-group="use" data-value="offroad" aria-pressed="false">Desert / off-road</button>
+            <button class="chip" data-group="use" data-value="tow" aria-pressed="false">Towing / hauling</button>
+            <button class="chip" data-group="use" data-value="economy" aria-pressed="false">Cheapest to run</button>
+            <button class="chip" data-group="use" data-value="fun" aria-pressed="false">Driving enjoyment</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>How long will you keep it</label>
+          <div class="chip-row">
+            <button class="chip" data-group="horizon" data-value="short" aria-pressed="false">Under 2 years</button>
+            <button class="chip" data-group="horizon" data-value="long" aria-pressed="true">3 years or more</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Appetite for maintenance</label>
+          <div class="chip-row">
+            <button class="chip" data-group="tolerance" data-value="low" aria-pressed="true">I want it boring and cheap</button>
+            <button class="chip" data-group="tolerance" data-value="mid" aria-pressed="false">I'll service it properly</button>
+            <button class="chip" data-group="tolerance" data-value="high" aria-pressed="false">I accept a real bill for the right car</button>
+          </div>
+        </div>
+
+        <div class="panel-foot">
+          <span class="note">Ranked on heat durability, use-case fit, parts cost and realistic first-year spend — not on what we would rather sell you.</span>
+        </div>
+      </div>
+
+      <div class="results" id="buy-results"></div>
+    </div>
+
+    <!-- ---------- SELLER ---------- -->
+    <div data-panel="sell" hidden>
+      <div class="tool-panel">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label for="sv-model">Your vehicle</label>
+            <select id="sv-model"></select>
+          </div>
+          <div class="field">
+            <label for="sv-year">Model year — <span class="val-out" id="sv-year-out">2017</span></label>
+            <input type="range" id="sv-year" min="2010" max="2023" step="1" value="2017">
+          </div>
+          <div class="field">
+            <label for="sv-km">Odometer — <span class="val-out" id="sv-km-out">120,000 km</span></label>
+            <input type="range" id="sv-km" min="10000" max="400000" step="5000" value="120000">
+          </div>
+          <div class="field">
+            <label for="sv-cond">Overall condition</label>
+            <select id="sv-cond">
+              <option value="excellent">Excellent — nothing to apologise for</option>
+              <option value="good" selected>Good — normal wear</option>
+              <option value="fair">Fair — needs cosmetic work</option>
+              <option value="rough">Rough — mechanical work owed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-acc">Accident history</label>
+            <select id="sv-acc">
+              <option value="none" selected>Clean, no repairs</option>
+              <option value="minor">Panel / cosmetic repair only</option>
+              <option value="major">Structural or chassis repair</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-spec">Specification</label>
+            <select id="sv-spec">
+              <option value="gcc" selected>GCC spec</option>
+              <option value="import">US / Japan / other import</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-hist">Service history</label>
+            <label style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--muted);text-transform:none;letter-spacing:0">
+              <input type="checkbox" id="sv-hist" checked style="width:auto;accent-color:var(--amber)">
+              Documented and complete
+            </label>
+          </div>
+        </div>
+        <div class="panel-foot">
+          <span class="note">Indicative only. The confirmed number comes from a physical appraisal and a full module scan — stored faults move the price more than mileage does.</span>
+        </div>
+      </div>
+
+      <div class="val-grid" id="sv-out"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PLANS ======================= -->
+
+<!-- ======================= PROCESS ======================= -->
+<section id="process" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// How It Runs</span>
+        <h2>Transfer and paperwork.</h2>
+      </div>
+      <p>Money moves at the transfer counter, by bank transfer or manager's cheque — never in a car park, never in cash on a promise.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="n">01</span>
+        <h4>Brief</h4>
+        <p>Buyers: budget, use and shortlist. Sellers: the car, its history and the number you want. Fifteen minutes on WhatsApp.</p>
+      </div>
+      <div class="step">
+        <span class="n">02</span>
+        <h4>Inspect &amp; scan</h4>
+        <p>On the lift, then on the scanner. All modules, stored codes and freeze-frames — not a walk-around and an OBD dongle.</p>
+      </div>
+      <div class="step">
+        <span class="n">03</span>
+        <h4>Verify the paper</h4>
+        <p>RTA vehicle history, mulkiya against the chassis, outstanding finance, export or salvage markers, GCC spec versus import.</p>
+      </div>
+      <div class="step">
+        <span class="n">04</span>
+        <h4>Price the truth</h4>
+        <p>A costed fault list becomes your negotiating position, or your seller's recon plan. Both sides get the same numbers.</p>
+      </div>
+      <div class="step">
+        <span class="n">05</span>
+        <h4>Settle &amp; transfer</h4>
+        <p>Bank loan settlement, insurance, Tasjeel test where needed, then transfer at the counter with both parties present.</p>
+      </div>
+      <div class="step">
+        <span class="n">06</span>
+        <h4>Hand over</h4>
+        <p>Keys, spare key programmed if one is missing, and a written record of what was found and what was fixed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RED FLAGS ======================= -->
+<section id="flags" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Walk Away</span>
+        <h2>Walk-away triggers.</h2>
+      </div>
+      <p>None of these are visible on a test drive. All of them are findable in an afternoon.</p>
+    </div>
+    <div class="flag-list">
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Flood or water-damaged car re-registered as clean</h4>
+          <p>Silt lines under the carpet and inside the spare wheel well, corrosion on connector pins, and modules with impossible fault histories. Electrical faults surface months later, one control unit at a time, and never stop.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Cut-and-shut or repaired structural damage</h4>
+          <p>Fresh weld and non-factory sealer on rails and pillars, mismatched panel gaps, and a car that never tracks straight. Nothing about the geometry can be trusted again, and no ADAS or steering calibration will settle properly.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Outstanding bank finance on the mulkiya</h4>
+          <p>The transfer will not complete and the seller's "we'll settle it after" is how deposits disappear. Settlement letter first, transfer second, money last.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Odometer inconsistent with the service record</h4>
+          <p>A wound-back cluster shows up as a mismatch between module-stored mileage, service stamps and RTA test history. It is provable, and it is a negotiating lever if the car is otherwise sound.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Non-GCC import with no cooling upgrade</h4>
+          <p>US and Japan imports arrive with radiators, A/C capacity and rubber specified for a different climate. They can work here, but they need the cooling system checked properly and they always resell for less — both belong in the price.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Recently cleared fault memory</h4>
+          <p>An adaptation counter reset days before the viewing, with every module reporting zero history, tells you more than a fault code would. We read readiness and adaptation data, not just the current codes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= LEAD ======================= -->
+
+<footer>
+  <div class="wrap f-inner">
+    <div class="f-brand">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#4A535C" stroke-width="1.5"/><g stroke="#4A535C" stroke-width="1.5"><line x1="50" y1="8" x2="50" y2="14"/><line x1="50" y1="86" x2="50" y2="92"/><line x1="8" y1="50" x2="14" y2="50"/><line x1="86" y1="50" x2="92" y2="50"/></g><path d="M 20 74 A 44 44 0 0 1 12 50" fill="none" stroke="#F2A93B" stroke-width="2" stroke-linecap="round"/><text x="50" y="59" text-anchor="middle" font-family="Oswald, Arial Narrow, sans-serif" font-weight="700" font-size="22" fill="#A9A49A">ATS</text></svg>
+      <span>ATS — Automotive Tech Solutions © <span id="year-now">2026</span></span>
+    </div>
+    <span class="f-note">Internal appraisal tool · not for distribution</span>
+  </div>
+</footer>
+
+<script src="assets/advisor.js"></script>
+</body>
+</html>
