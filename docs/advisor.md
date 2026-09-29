@@ -1,7 +1,14 @@
 # UAE Used Cars Advisor — working notes
 
-Where to pick this up on another machine. No build step, no dependencies:
-open `advisor.html` directly, or `npx http-server .` from the repo root.
+Where to pick this up on another machine. No build step, no dependencies —
+but it must be **served**, not opened off the disk:
+
+```
+npx http-server .        # then open http://127.0.0.1:8080/advisor.html
+```
+
+Double-clicking `advisor.html` shows a message instead of the tools. Browsers
+block local data files over `file://`, and service workers need a real origin.
 
 ## Files
 
@@ -9,7 +16,11 @@ open `advisor.html` directly, or `npx http-server .` from the repo root.
 |---|---|
 | `advisor.html` | Markup only. Section order, copy, form fields. |
 | `assets/advisor.css` | Styling. Same design tokens as `index.html`, kept separate so the advisor can move without touching the portfolio page. |
-| `assets/advisor.js` | `CONFIG` (all money), `MODELS` (all vehicle data), then the logic. |
+| `assets/advisor.js` | `CONFIG` (all money), then the logic. |
+| `data/models.json` | The vehicle database. Single source of truth. |
+| `manifest.webmanifest` | Web app manifest — name, icons, standalone display. |
+| `sw.js` | Service worker: offline shell. |
+| `assets/icons/` | Generated PNG icons for install and home screen. |
 
 `index.html` is untouched apart from one nav link.
 
@@ -20,7 +31,9 @@ inspection fees, buyer's-agent fee, the seller fixed fee, the commission
 percentage and its floor, plus the valuation assumptions. Change a number here
 and the plan cards, the fee comparator and the net-proceeds maths all follow.
 
-**`MODELS`** — the reference database. One object per platform:
+**`data/models.json`** — the reference database, one object per platform. It is
+plain JSON with no code in it, so a wrapped mobile app, a print sheet or any
+other front end reads the same file rather than a second copy.
 
 - `price: [low, high]` — AED span across the listed year range. **Placeholders.**
   Calibrate these against live Dubizzle / YallaMotor asking prices before the
@@ -35,8 +48,10 @@ and the plan cards, the fee comparator and the net-proceeds maths all follow.
   economy, fun`. The selected use is a **hard filter** (a saloon never gets
   recommended for dune work); it relaxes only if fewer than 3 cars match.
 
-Adding a car = appending one object. Nothing else needs touching — the seller
-dropdown, the buyer ranking and the year slider bounds all read from the array.
+Adding a car = appending one object to `data/models.json`. Nothing else needs
+touching — the seller dropdown, the buyer ranking and the year slider bounds all
+read from it. **Bump `CACHE` in `sw.js` after editing it**, or people who
+already installed the app keep the old data until their cache is evicted.
 
 ## How the numbers are produced
 
@@ -55,11 +70,42 @@ history, service history and GCC-spec vs import. Output is a ±7% range.
 it the commission plan is cheaper for the customer; above it the fixed fee is.
 At the current numbers that crossover is AED 100,000.
 
+## Installable app (PWA)
+
+The advisor installs to a phone home screen and runs offline — the whole thing
+is static, so once cached it works in a basement car park with no signal.
+
+- **Android / Chrome** — an "Install app" button appears in the hero when the
+  browser offers installation. It stays hidden otherwise, which is correct.
+- **iOS / Safari** — Share → Add to Home Screen. Apple gives no API to trigger
+  this, so there is no button to show.
+- **Offline** — `sw.js` precaches the page, CSS, JS, `models.json` and the
+  icons, then serves everything stale-while-revalidate. Page loads are
+  network-first with a cached fallback.
+- **Cache versioning** — `CACHE = 'ats-advisor-v1'` in `sw.js`. Bump it whenever
+  a precached file changes. This is the one piece of maintenance the PWA adds.
+- **Fonts** — Google Fonts are cross-origin. They get cached after the first
+  online visit, but a first run with no connection falls back to system fonts.
+  Self-host the three families if that matters.
+- **Icons** — generated from the ATS mark at 192, 512, maskable 512 and a
+  180px Apple touch icon. Regenerate by rendering the SVG in the nav at those
+  sizes on a `#0A0B0D` background; the maskable one needs the mark at roughly
+  56% so it survives Android's circular mask.
+
+### If it ever needs to be in the app stores
+
+Wrap the same files with Capacitor. Google Play is straightforward. Apple
+rejects thin web wrappers under guideline 4.2, so it needs native capability
+first — VIN camera scan and share-sheet intake of a listing URL are the two
+that would both clear review and actually be useful in the field. An iOS build
+requires a Mac with Xcode.
+
 ## Open items
 
 - [ ] Calibrate `price` bands against live listings (biggest accuracy gap).
 - [ ] Confirm the fee numbers in `CONFIG.fees` — currently sensible placeholders.
 - [ ] Decide whether leads should hit the backend (`/api/…`, as the booking form
       on `index.html` does) instead of, or alongside, the WhatsApp handoff.
-- [ ] Arabic version of the page.
+- [ ] Arabic version of the page (RTL — the manifest has `"dir": "ltr"` to change).
+- [ ] Self-host the fonts if a cold offline first-run needs to look right.
 - [ ] Optional: RTA transfer cost calculator (plates, insurance, Tasjeel test).

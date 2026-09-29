@@ -2,13 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>UAE Used Cars Advisor — ATS</title>
 <meta name="description" content="Buy or sell a used car in the UAE with a diagnostic workshop behind you. Known-fault briefings, pre-purchase inspection, managed sale on a fixed fee or commission. Dubai, UAE.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Montserrat:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/advisor.css">
+
+<!-- Installable web app: home-screen icon, standalone window, works offline -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0A0B0D">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ATS Advisor">
 </head>
 <body>
 
@@ -41,6 +51,9 @@
     <div class="hero-actions">
       <a href="#advisor" class="btn btn-primary">Open the advisor</a>
       <a href="#plans" class="btn btn-outline">See the plans</a>
+      <!-- Shown only when the browser offers installation (Android / Chrome).
+           iOS installs via Share > Add to Home Screen, which we cannot trigger. -->
+      <button type="button" id="install-btn" class="btn btn-outline" hidden>Install app</button>
     </div>
     <div class="hero-meta">
       <div><span class="val">24</span><span class="lbl">Platforms on file</span></div>

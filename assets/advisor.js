@@ -43,346 +43,30 @@ const CONFIG = {
 };
 
 /* ============================================================================
-   MODELS — UAE used-market reference data.
+   MODELS — UAE used-market reference data, loaded from data/models.json.
 
-   price   : [low, high] AED span across the listed year range. INDICATIVE.
-             Re-check against live classifieds before quoting a customer.
-   rel     : 1–5 durability score AS EXPERIENCED IN UAE HEAT, not a global
-             reliability rating. Cooling, A/C, rubber and gearbox thermal load
-             are weighted heavily — that is what actually fails here.
-   faults  : documented, commonly-seen failures. Keep this list honest; it is
-             the part of the page that earns trust.
-   check   : what ATS specifically puts on the lift / scanner for this platform.
-   recon   : realistic first-12-months spend [low, high] on a clean example.
+   That file is the single source of truth: this page and anything built on
+   top of it later (a wrapped mobile app, a print sheet) read the same JSON.
+   Field meanings are documented in docs/advisor.md — in short:
+
+     price  [low, high] AED across the year range. INDICATIVE, needs calibrating.
+     rel    1-5 durability AS EXPERIENCED IN UAE HEAT, not a global score.
+     faults documented, commonly-seen failures. Keep this honest.
+     check  what ATS puts on the lift / scanner for this platform.
+     recon  realistic first-12-months spend [low, high] on a clean example.
+     tags   drives the buyer filter, and the selected use is a hard filter.
    ========================================================================== */
-const MODELS = [
-  {
-    name: 'Toyota Land Cruiser 200', yrs: '2012–2021', body: 'suv',
-    tags: ['family', 'offroad', 'highway', 'tow'], price: [85000, 330000],
-    eng: '4.0 V6 1GR-FE / 4.6–5.7 V8 UR', gbx: '6-spd / 8-spd auto', parts: 'mid', rel: 5,
-    faults: [
-      'Exhaust manifold hairline cracks on some V8 UR engines',
-      'Rear A/C evaporator and blower failures from dust load',
-      'Front diff pinion and CV boot seepage on high-km cars',
-      'Brake booster / actuator assembly on later facelift cars is expensive',
-    ],
-    check: ['Full module scan for stored 4WD and ABS codes', 'Coolant and A/C pressure under load', 'Chassis rail and rear crossmember for desert damage'],
-    recon: [3000, 9000],
-    verdict: 'The default safe answer in this market. Holds value better than anything else, parts are everywhere, and nothing about it is thermally marginal.',
-  },
-  {
-    name: 'Nissan Patrol Y62', yrs: '2013–2022', body: 'suv',
-    tags: ['family', 'offroad', 'highway', 'tow', 'fun'], price: [70000, 280000],
-    eng: '5.6 V8 VK56VD', gbx: '7-spd auto', parts: 'mid', rel: 4,
-    faults: [
-      'Early VK56VD (roughly 2011–2013) valve-seat and timing-chain-guide noise',
-      'Transfer case actuator and 4WD mode selector faults',
-      'Hydraulic Body Motion Control lines and accumulators leak with age',
-      'ICC / centre display and A/C amplifier electrical gremlins',
-    ],
-    check: ['Cold-start listen for chain rattle before anything else', 'HBMC circuit for weeping and pressure hold', 'Transfer case actuator commanded through the scan tool'],
-    recon: [4000, 14000],
-    verdict: 'Enormous performance per dirham. Buy a post-2014 car, verify the cold start, and budget for the hydraulic suspension eventually.',
-  },
-  {
-    name: 'Toyota Prado 150', yrs: '2010–2023', body: 'suv',
-    tags: ['family', 'offroad', 'highway'], price: [55000, 210000],
-    eng: '2.7 4-cyl / 4.0 V6 1GR-FE', gbx: '5/6-spd auto', parts: 'cheap', rel: 5,
-    faults: [
-      'Front CV boots and lower ball joints on dune-driven cars',
-      'Rear A/C blower and evaporator restriction',
-      '2.7 four-cylinder is genuinely underpowered fully loaded',
-    ],
-    check: ['Steering rack and ball joint play', 'Diff and transfer oil condition for water ingress', 'Underbody for sand-blasted / bent skid plates'],
-    recon: [2500, 7000],
-    verdict: 'Lowest-risk family SUV under 150k. Take the 4.0 V6 if the budget stretches — the 2.7 works the gearbox hard in traffic.',
-  },
-  {
-    name: 'Lexus LX570', yrs: '2012–2021', body: 'suv',
-    tags: ['family', 'offroad', 'highway', 'tow'], price: [95000, 330000],
-    eng: '5.7 V8 3UR-FE', gbx: '6/8-spd auto', parts: 'premium', rel: 4,
-    faults: [
-      'AHC hydraulic suspension: accumulators, height sensors and fluid neglect',
-      'Air suspension / AHC warning lights are the single biggest bill on this car',
-      'Rear entertainment and Mark Levinson amplifier faults',
-    ],
-    check: ['AHC pressure and height-sensor calibration on the lift', 'AHC fluid condition and leak trace', 'Full body control module scan'],
-    recon: [5000, 18000],
-    verdict: 'A Land Cruiser with a hydraulic suspension bill attached. Superb otherwise — just price the AHC into the offer, never assume it is fine.',
-  },
-  {
-    name: 'Mitsubishi Pajero V80', yrs: '2010–2021', body: 'suv',
-    tags: ['family', 'offroad', 'economy'], price: [30000, 90000],
-    eng: '3.0 / 3.8 V6 6G7x', gbx: '5-spd auto', parts: 'cheap', rel: 4,
-    faults: [
-      '4WD transfer actuator and front diff engagement failures',
-      'Ball joints, bushings and steering idler wear early on rough roads',
-      'A/C condenser and cooling fan clutch',
-    ],
-    check: ['4WD engagement through all modes, actuator commanded', 'Front diff and transfer for leaks', 'Rust in rear wheel arches on coastal cars'],
-    recon: [2500, 7000],
-    verdict: 'The value play for real off-road use. Mechanically simple, parts are cheap, resale is weak — which is exactly why it is cheap to own.',
-  },
-  {
-    name: 'Toyota Corolla', yrs: '2014–2023', body: 'sedan',
-    tags: ['city', 'economy', 'family'], price: [22000, 75000],
-    eng: '1.6 / 2.0 4-cyl', gbx: 'CVT / 4-spd auto', parts: 'cheap', rel: 5,
-    faults: [
-      'CVT fluid neglect on fleet and ex-rental cars',
-      'A/C evaporator smell and blower resistor',
-      'Suspension bushings and strut mounts from speed bumps',
-    ],
-    check: ['CVT fluid condition and adaptation counters', 'Service history vs odometer plausibility', 'Ex-rental indicators: door jamb stickers, key count, rear seat wear'],
-    recon: [1200, 4000],
-    verdict: 'Nothing cheaper to run, nothing easier to resell. The only real risk is buying an abused ex-rental — that is a history check, not a mechanical one.',
-  },
-  {
-    name: 'Toyota Camry', yrs: '2013–2023', body: 'sedan',
-    tags: ['city', 'family', 'economy', 'highway'], price: [30000, 105000],
-    eng: '2.5 2AR-FE / 3.5 V6', gbx: '6/8-spd auto', parts: 'cheap', rel: 5,
-    faults: [
-      'Water pump and thermostat housing seepage past 120k km',
-      'Front strut mounts and sway bar bushings',
-      'Minor oil consumption on some early 2AR-FE engines',
-    ],
-    check: ['Cooling system pressure test', 'Transmission fluid condition and shift quality under load', 'Odometer against RTA history'],
-    recon: [1500, 4500],
-    verdict: 'The sensible ceiling for a family sedan here. V6 cars are barely more to run and drive far better.',
-  },
-  {
-    name: 'Lexus ES350', yrs: '2013–2023', body: 'sedan',
-    tags: ['city', 'family', 'highway'], price: [30000, 110000],
-    eng: '3.5 V6 2GR-FE', gbx: '6/8-spd auto', parts: 'mid', rel: 5,
-    faults: [
-      'Rubber oil cooler hose in the V-bank — a known failure worth replacing preemptively',
-      'A/C compressor and rear evaporator on high-km cars',
-      'Dashboard and door-card plastics degrade in the sun on older examples',
-    ],
-    check: ['Oil cooler hose condition — direct inspection, not a guess', 'Cooling system pressure and coolant condition', 'Full scan for stored airbag and body codes'],
-    recon: [2000, 6000],
-    verdict: 'Camry reliability with a properly insulated cabin. Best value luxury sedan in the market if you skip the German alternatives.',
-  },
-  {
-    name: 'Honda Accord', yrs: '2013–2022', body: 'sedan',
-    tags: ['city', 'family', 'economy'], price: [28000, 85000],
-    eng: '2.4 Earth Dreams / 3.5 V6', gbx: 'CVT / 6-spd auto', parts: 'cheap', rel: 4,
-    faults: [
-      'VTC actuator rattle on cold start (2.4 engines)',
-      'CVT fluid service interval is routinely ignored here',
-      'A/C compressor clutch and condenser',
-    ],
-    check: ['Cold-start VTC rattle', 'CVT fluid and drive quality from cold', 'A/C output temperature after 15 minutes idling'],
-    recon: [1500, 5000],
-    verdict: 'Better to drive than a Camry, slightly more to fix, resale a step behind Toyota. Fine buy on service history.',
-  },
-  {
-    name: 'Nissan Altima L33', yrs: '2013–2023', body: 'sedan',
-    tags: ['city', 'economy'], price: [20000, 65000],
-    eng: '2.5 QR25DE', gbx: 'JATCO CVT', parts: 'cheap', rel: 2,
-    faults: [
-      'JATCO CVT judder, whine and failure — heat accelerates it badly here',
-      'CVT cooling is marginal in summer traffic',
-      'A/C compressor and cooling fan assembly',
-    ],
-    check: ['CVT fluid colour and smell, plus a hot drive at low speed', 'Stored CVT codes and adaptation data', 'Ex-rental / taxi history — most cheap ones are'],
-    recon: [3000, 16000],
-    verdict: 'Only buy with a documented CVT service record, or with the gearbox already replaced. Otherwise the purchase price is a deposit on a gearbox.',
-  },
-  {
-    name: 'Hyundai Sonata / Kia Optima', yrs: '2012–2019', body: 'sedan',
-    tags: ['city', 'economy'], price: [20000, 60000],
-    eng: '2.4 GDI Theta II', gbx: '6-spd auto', parts: 'cheap', rel: 2,
-    faults: [
-      'Theta II 2.4 GDI rod-bearing failure — subject to recall campaigns, verify it was done',
-      'Carbon build-up on GDI intake valves',
-      'Steering coupler noise and A/C compressor',
-    ],
-    check: ['Engine knock at hot idle — listen before the test drive, not after', 'Recall status against the VIN', 'Oil level and condition, and whether it burns oil'],
-    recon: [2000, 14000],
-    verdict: 'Cheap to buy for a reason. Acceptable only with proven recall work and a clean hot-idle listen.',
-  },
-  {
-    name: 'Volkswagen Golf Mk7 / Tiguan', yrs: '2013–2021', body: 'hatch',
-    tags: ['city', 'fun', 'economy'], price: [22000, 70000],
-    eng: '1.4 TSI EA211 / 2.0 TSI EA888', gbx: 'DQ200 dry DSG / DQ250 wet DSG', parts: 'mid', rel: 2,
-    faults: [
-      'DQ200 seven-speed dry-clutch mechatronic failure — heat is the trigger',
-      'Water pump / thermostat housing leaks, plastic housings crack',
-      'PCV / crankcase breather diaphragm, then rough idle and oil consumption',
-      'EA888 timing chain tensioner on earlier Gen2 engines',
-    ],
-    check: ['DSG adaptation values and clutch wear data read out, not guessed', 'Hot low-speed crawl test for mechatronic shudder', 'Coolant housing and water pump area for dried residue'],
-    recon: [3500, 15000],
-    verdict: 'Great to drive, thermally fragile here. Wet-clutch DQ250 cars are the safer pick; a dry DQ200 needs read-out proof, not a clean invoice.',
-  },
-  {
-    name: 'Audi Q5 (8R)', yrs: '2012–2017', body: 'suv',
-    tags: ['city', 'family', 'highway'], price: [30000, 80000],
-    eng: '2.0 TFSI EA888 Gen2', gbx: '8-spd Tiptronic / S tronic', parts: 'premium', rel: 2,
-    faults: [
-      'EA888 Gen2 timing chain tensioner failure on pre-2013 engines',
-      'Oil consumption from piston ring design on the same engine family',
-      'PCV diaphragm and water pump housing leaks',
-      'Sunroof drains blocking and wetting the footwell electronics',
-    ],
-    check: ['Chain tensioner revision confirmed physically or via invoice', 'Oil consumption question asked directly and verified against level', 'Full scan including stored freeze-frames, not just current codes'],
-    recon: [4000, 18000],
-    verdict: 'Only worth it post-2013 with the revised tensioner and paperwork. Before that, the engine is a known liability.',
-  },
-  {
-    name: 'BMW 528i F10 (N20)', yrs: '2011–2016', body: 'sedan',
-    tags: ['city', 'highway', 'fun'], price: [28000, 75000],
-    eng: '2.0 turbo N20', gbx: 'ZF 8-spd', parts: 'premium', rel: 2,
-    faults: [
-      'N20 timing chain and guide failure on earlier engines — catastrophic when it goes',
-      'Oil filter housing gasket leaking onto the belt',
-      'Electric water pump and thermostat, heat-related',
-      'VANOS solenoids and eccentric shaft sensor',
-      'ZF8 mechatronic sleeve seal weep',
-    ],
-    check: ['Chain and guide condition assessed properly — the deciding factor on price', 'Oil filter housing and belt area for contamination', 'Water pump current draw and coolant temp behaviour'],
-    recon: [5000, 20000],
-    verdict: 'Cheap to buy, expensive to own. Buyable only if the chain has documented attention and you accept a real maintenance budget.',
-  },
-  {
-    name: 'BMW X5 F15 xDrive35i (N55)', yrs: '2014–2018', body: 'suv',
-    tags: ['family', 'highway', 'fun'], price: [55000, 150000],
-    eng: '3.0 turbo N55', gbx: 'ZF 8-spd', parts: 'premium', rel: 3,
-    faults: [
-      'Water pump and thermostat — treat as a service item in this climate',
-      'Valve cover gasket and oil filter housing gasket leaks',
-      'High pressure fuel pump and injectors',
-      'Rear air suspension bags where fitted',
-    ],
-    check: ['Cooling system pressure test and water pump current draw', 'Rear air suspension hold test overnight where fitted', 'Full module scan with freeze-frame review'],
-    recon: [4500, 16000],
-    verdict: 'The N55 is the sane BMW six. Solid buy with records — budget cooling work as maintenance, not as a surprise.',
-  },
-  {
-    name: 'BMW X5 / 550i (N63)', yrs: '2011–2017', body: 'suv',
-    tags: ['family', 'highway', 'fun'], price: [50000, 140000],
-    eng: '4.4 twin-turbo N63', gbx: 'ZF 8-spd', parts: 'premium', rel: 1,
-    faults: [
-      'Valve stem seal failure and heavy oil consumption — the defining N63 problem',
-      'Turbo coolant lines and vacuum system degradation from underhood heat',
-      'Battery drain and repeated battery failure',
-      'Timing chain on early engines; injector and coil attrition throughout',
-    ],
-    check: ['Oil consumption history questioned and verified', 'Cold-start smoke and hot restart behaviour', 'Full scan for misfire counters and adaptation limits'],
-    recon: [8000, 35000],
-    verdict: 'Do not buy this on price alone. A cheap N63 is the most expensive car in this list — walk unless the seals and cooling are documented.',
-  },
-  {
-    name: 'Mercedes E300 W212', yrs: '2012–2016', body: 'sedan',
-    tags: ['city', 'highway', 'family'], price: [35000, 95000],
-    eng: '3.5 V6 M276', gbx: '7G-Tronic 722.9', parts: 'premium', rel: 3,
-    faults: [
-      '722.9 conductor plate and 13-pin connector leak — gearbox fluid wicks into the loom',
-      'Oil cooler seals and thermostat housing seepage',
-      'Airmatic struts and compressor where fitted, heat-accelerated',
-      'COMAND / SBC electrical faults and module communication codes',
-    ],
-    check: ['13-pin connector pulled and inspected for fluid migration', 'Gearbox adaptation and shift quality from cold', 'Airmatic hold test where fitted'],
-    recon: [4000, 14000],
-    verdict: 'A good W212 is an excellent car. The gearbox valve body and the 13-pin connector decide whether this one is good — check them first.',
-  },
-  {
-    name: 'Mercedes ML / GLE W166', yrs: '2012–2019', body: 'suv',
-    tags: ['family', 'highway', 'tow'], price: [55000, 170000],
-    eng: '3.5 V6 / 4.7 V8 / diesel', gbx: '7G-Tronic / 9G-Tronic', parts: 'premium', rel: 3,
-    faults: [
-      'Airmatic compressor and struts',
-      'Transfer case chain wear on earlier examples',
-      'Front subframe and control arm bushings',
-      '722.9 valve body on earlier cars; 9G is stronger',
-    ],
-    check: ['Airmatic overnight hold and compressor duty cycle', 'Transfer case noise on a steady-throttle load test', 'Full module scan and SCR / emissions status on diesels'],
-    recon: [5000, 18000],
-    verdict: 'Comfortable and capable. Later 9G-Tronic cars are the ones to chase; earlier cars carry both the gearbox and the transfer case risk.',
-  },
-  {
-    name: 'Range Rover Sport L494', yrs: '2014–2021', body: 'suv',
-    tags: ['family', 'highway', 'offroad', 'fun'], price: [70000, 220000],
-    eng: '3.0 V6 SC / 5.0 V8 SC', gbx: 'ZF 8-spd', parts: 'premium', rel: 1,
-    faults: [
-      'Air suspension compressor, valve block and bags',
-      'Timing chain and tensioner on the 5.0 supercharged V8',
-      'Cooling system, supercharger coolant pump and thermostats',
-      'InControl / infotainment and pervasive module communication faults',
-    ],
-    check: ['Air suspension hold test and compressor duty', 'Full module scan — expect stored codes, judge which ones matter', 'Coolant condition and supercharger intercooler circuit'],
-    recon: [10000, 40000],
-    verdict: 'Buy for how it feels, never for value. Only with a full main-dealer history and a genuine running budget — otherwise this is a money pit with a good badge.',
-  },
-  {
-    name: 'Ford Explorer U502', yrs: '2012–2019', body: 'suv',
-    tags: ['family', 'economy', 'highway'], price: [28000, 110000],
-    eng: '3.5 V6 Cyclone / 2.3 EcoBoost', gbx: '6F50 6-spd auto', parts: 'cheap', rel: 2,
-    faults: [
-      'Internal, timing-cover-driven water pump on the 3.5 V6 — failure dumps coolant into the oil',
-      'PTU (power transfer unit) overheating and fluid breakdown',
-      'Transmission valve body and torque converter shudder',
-      'A/C and rear blower failures',
-    ],
-    check: ['Oil for coolant contamination — non-negotiable on the 3.5 V6', 'PTU for heat discolouration and leaks', 'Transmission fluid condition and shift shock at low speed'],
-    recon: [3500, 18000],
-    verdict: 'Enormous space per dirham with one serious engineering flaw. Only with a clean oil analysis and a PTU inspection.',
-  },
-  {
-    name: 'Jeep Grand Cherokee WK2', yrs: '2012–2021', body: 'suv',
-    tags: ['family', 'offroad', 'fun'], price: [30000, 120000],
-    eng: '3.6 Pentastar / 5.7 HEMI', gbx: '5/8-spd auto', parts: 'mid', rel: 2,
-    faults: [
-      'Pentastar cylinder head failure on 2011–2013 engines',
-      'Rocker arm / lifter tick and, on HEMI, MDS lifter issues',
-      'Quadra-Lift air suspension compressor and bags',
-      'TIPM and general electrical module faults',
-    ],
-    check: ['Cold-start and hot-idle tick localisation', 'Air suspension hold and compressor test', 'Full scan including TIPM-related body codes'],
-    recon: [4000, 18000],
-    verdict: 'Good off-road, weak electrically. Post-2014 Pentastar cars only, and price the air suspension in.',
-  },
-  {
-    name: 'Chevrolet Tahoe / Suburban', yrs: '2012–2020', body: 'suv',
-    tags: ['family', 'tow', 'highway', 'offroad'], price: [45000, 190000],
-    eng: '5.3 V8 (AFM) / 6.2 V8', gbx: '6L80 / 8L90 / 10-spd', parts: 'cheap', rel: 3,
-    faults: [
-      'AFM / DoD lifter collapse and oil consumption on the 5.3',
-      '6L80 torque converter shudder and valve body wear',
-      'A/C rear lines and evaporator',
-      'Magnetic ride dampers where fitted',
-    ],
-    check: ['Cylinder deactivation history and lifter noise at hot idle', 'Transmission shudder at light throttle, 60–80 km/h', 'Oil consumption asked and verified'],
-    recon: [3000, 14000],
-    verdict: 'Cheapest big-family seat count with cheap parts. AFM lifters and the 6L80 are the two things that decide the offer.',
-  },
-  {
-    name: 'Toyota Hilux', yrs: '2012–2023', body: 'pickup',
-    tags: ['tow', 'offroad', 'economy', 'highway'], price: [35000, 130000],
-    eng: '2.7 petrol / 4.0 V6 / 2.8 diesel', gbx: '5/6-spd manual & auto', parts: 'cheap', rel: 5,
-    faults: [
-      'Leaf spring and bushing wear on overloaded work trucks',
-      'Front CV and wheel bearing wear on 4WD examples',
-      'A/C condenser damage from stone strike',
-    ],
-    check: ['Chassis and rear leaf mounts for overload distortion', 'Diff and transfer oil for water', 'Service history vs commercial use hours'],
-    recon: [1500, 6000],
-    verdict: 'Nearly unkillable. The only question is how hard the previous owner worked it — inspect the chassis, not the engine.',
-  },
-  {
-    name: 'Mazda CX-5 / Mazda 6', yrs: '2013–2022', body: 'suv',
-    tags: ['city', 'family', 'economy'], price: [30000, 95000],
-    eng: '2.0 / 2.5 SkyActiv-G', gbx: '6-spd auto', parts: 'mid', rel: 4,
-    faults: [
-      'Cooling fan and water pump on high-km cars',
-      'Rear brake and suspension wear from city driving',
-      'Infotainment (CMU) software faults on earlier cars',
-    ],
-    check: ['Cooling system condition and coolant level history', 'Carbon build-up symptoms on 2.5 engines', 'Full scan for stored body and i-ACTIVSENSE codes'],
-    recon: [1800, 6000],
-    verdict: 'The best-driving mainstream option. Slightly thinner parts network than Toyota, but no structural weak point.',
-  },
-];
+let MODELS = [];
+
+async function loadModels() {
+  // Relative to the page, so it works under any deploy path.
+  const res = await fetch("data/models.json", { cache: "no-cache" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (!Array.isArray(data) || !data.length) throw new Error("empty dataset");
+  MODELS = data;
+}
+
 
 /* ========================== helpers ==================================== */
 const AED = (n) => CONFIG.currency + ' ' + Math.round(n).toLocaleString('en-US');
@@ -390,6 +74,21 @@ const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const yearsOf = (m) => { const p = m.yrs.split(/[–-]/); return [parseInt(p[0], 10), parseInt(p[1], 10)]; };
+
+/* Range inputs get no visible fill for free — paint the filled portion as a
+   CSS variable so the track reads as a position, not just a floating thumb. */
+const paintRange = (el) => {
+  const min = Number(el.min) || 0;
+  const max = Number(el.max) || 100;
+  const pct = max === min ? 0 : ((Number(el.value) - min) / (max - min)) * 100;
+  el.style.setProperty('--fill', pct.toFixed(2) + '%');
+};
+function initRangeFill() {
+  $$('input[type=range]').forEach((el) => {
+    paintRange(el);
+    el.addEventListener('input', () => paintRange(el));
+  });
+}
 
 /* ========================== BUYER ADVISOR ============================== */
 const buyerState = { budget: 90000, body: 'any', use: 'family', horizon: 'long', tolerance: 'low' };
@@ -705,6 +404,7 @@ function initSeller() {
     const [y0, y1] = yearsOf(MODELS[parseInt(sel.value, 10)]);
     year.min = y0; year.max = y1;
     if (+year.value < y0 || +year.value > y1) year.value = Math.round((y0 + y1) / 2);
+    paintRange(year);
     $('#sv-year-out').textContent = year.value;
     $('#sv-km-out').textContent = (+km.value).toLocaleString('en-US') + ' km';
     renderSeller();
@@ -732,13 +432,63 @@ function initTabs() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function dataFailure(err) {
+  const msg = `<div class="empty">Vehicle data could not be loaded (${esc(err.message)}).<br><br>
+    If you opened this page straight off the disk, serve it instead —
+    <span class="mono">npx http-server .</span> — browsers block local data files
+    over <span class="mono">file://</span>.</div>`;
+  $('#buy-results').innerHTML = msg;
+  $('#sv-out').innerHTML = msg;
+}
+
+/* -- Offline shell. No service worker on file:// — it needs a real origin. -- */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  navigator.serviceWorker.register('sw.js').catch(() => { /* offline support is optional */ });
+}
+
+/* -- Android / Chrome install button. iOS uses Share > Add to Home Screen,
+      which the browser drives itself and cannot be triggered from here. ---- */
+function initInstallPrompt() {
+  const btn = $('#install-btn');
+  let deferred = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferred = e;
+    btn.hidden = false;
+  });
+
+  btn.addEventListener('click', async () => {
+    if (!deferred) return;
+    btn.hidden = true;
+    deferred.prompt();
+    await deferred.userChoice;
+    deferred = null;
+  });
+
+  window.addEventListener('appinstalled', () => { btn.hidden = true; });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Plans, the fee comparator and the lead form carry no vehicle data, so they
+  // come up immediately and stay usable even if the dataset fetch fails.
   renderPlans();
   initTabs();
-  initBuyer();
-  initSeller();
+  initLeadForm();
   $('#cmp-price').addEventListener('input', renderCompare);
   renderCompare();
-  initLeadForm();
   $('#year-now').textContent = new Date().getFullYear();
+
+  try {
+    await loadModels();
+    initBuyer();
+    initSeller();
+  } catch (err) {
+    dataFailure(err);
+  }
+
+  initRangeFill();
+  registerServiceWorker();
+  initInstallPrompt();
 });

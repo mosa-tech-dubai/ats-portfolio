@@ -92,7 +92,7 @@ section{padding:88px 0;}
 .field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;}
 .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gray-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;}
 .field input,.field select,.field textarea{width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--white);padding:12px 14px;font-family:'Montserrat',sans-serif;font-size:14px;border-radius:2px;}
-.field input[type=range]{padding:0;background:transparent;border:none;accent-color:var(--orange);}
+.field input[type=range]{padding:0;border:none;}
 .field .hint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);margin-top:6px;display:block;}
 .field .val-out{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--orange);}
 .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
@@ -205,7 +205,21 @@ footer .f-brand span{font-family:'JetBrains Mono',monospace;font-size:11px;color
 footer .f-note{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--gray-dim);}
 
 /* ---------- RANGE INPUTS (explicit: accent-color alone leaves a pale track) ---------- */
-input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--line);border-radius:2px;cursor:pointer;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:3px;cursor:pointer;
+  background:linear-gradient(to right, var(--orange) 0 var(--fill,0%), #3A3C42 var(--fill,0%) 100%);}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--orange);border:2px solid var(--black);box-shadow:0 0 0 1px var(--orange-dim);cursor:pointer;}
 input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--orange);border:2px solid var(--black);cursor:pointer;}
-input[type=range]::-moz-range-track{height:4px;background:var(--line);border-radius:2px;}
+input[type=range]::-moz-range-track{height:5px;background:transparent;border-radius:3px;}
+
+/* ---------- STANDALONE / PHONE ---------- */
+/* Installed as an app on a notched phone, the nav and footer must clear the
+   system insets; viewport-fit=cover in the page head is what exposes these. */
+nav{padding-top:env(safe-area-inset-top);}
+footer{padding-bottom:calc(26px + env(safe-area-inset-bottom));}
+@media (max-width:560px){
+  .wrap{padding-left:max(20px, env(safe-area-inset-left));padding-right:max(20px, env(safe-area-inset-right));}
+  .nav-inner{padding-left:20px;padding-right:20px;}
+  section{padding:64px 0;}
+  .hero{padding:130px 0 70px;}
+  .hero-meta{gap:20px 26px;}
+}
