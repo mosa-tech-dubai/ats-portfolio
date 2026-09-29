@@ -1,4 +1,8 @@
-# UAE Used Cars Advisor — working notes
+# ATS Appraisal tool — working notes
+
+**Internal. Not published, not linked from `index.html`, `noindex` on the page.**
+Nothing in this tool quotes a fee: Sell-Ready pricing is unset and the broking line is
+not live (`ats-ops/data/car-sales-desk.md` gate 1).
 
 Where to pick this up on another machine. No build step, no dependencies —
 but it must be **served**, not opened off the disk:
@@ -16,7 +20,7 @@ block local data files over `file://`, and service workers need a real origin.
 |---|---|
 | `advisor.html` | Markup only. Section order, copy, form fields. |
 | `assets/advisor.css` | Styling. Same design tokens as `index.html`, kept separate so the advisor can move without touching the portfolio page. |
-| `assets/advisor.js` | `CONFIG` (all money), then the logic. |
+| `assets/advisor.js` | `CONFIG` (valuation assumptions only — no fees), then the logic. |
 | `data/models.json` | The vehicle database. Single source of truth. |
 | `manifest.webmanifest` | Web app manifest — name, icons, standalone display. |
 | `sw.js` | Service worker: offline shell. |
@@ -27,10 +31,10 @@ block local data files over `file://`, and service workers need a real origin.
 
 ## The two edit points
 
-**`CONFIG`** — top of `advisor.js`. Every dirham on the page comes from here:
-inspection fees, buyer's-agent fee, the seller fixed fee, the commission
-percentage and its floor, plus the valuation assumptions. Change a number here
-and the plan cards, the fee comparator and the net-proceeds maths all follow.
+**`CONFIG`** — top of `advisor.js`. Valuation assumptions only: the kilometre
+baseline, the condition and history factors, the year curve, and the two seller
+routes (trade band, listing uplift, drop step and interval). **There are no fee
+fields and none should be added** — see the gate above.
 
 **`data/models.json`** — the reference database, one object per platform. It is
 plain JSON with no code in it, so a wrapped mobile app, a print sheet or any
@@ -67,9 +71,11 @@ low, which is the safe direction for a seller estimate), then adjusted for
 kilometres against a 20,000 km/year local baseline, condition, accident
 history, service history and GCC-spec vs import. Output is a ±7% range.
 
-**Fee comparator** — break-even is `sellerFixed ÷ (commissionPct/100)`. Below
-it the commission plan is cheaper for the customer; above it the fixed fee is.
-At the current numbers that crossover is AED 100,000.
+**Seller routes** — mirrors the Jetour T2 precedent in
+`ats-ops/data/sell-ready-test-jetour-t2.md`: a Fast Sell trade band, a Proper
+Listing start above the expected sale price, and a drop schedule agreed with the
+owner *before* listing. The Fast Sell band is labelled **subject to dealer quote**
+on the page and stays that way until `T-052` closes.
 
 ## Installable app (PWA)
 
@@ -141,8 +147,8 @@ two pages differ while sharing a nav link.
 
 - [ ] Calibrate `price` bands against live listings (biggest accuracy gap).
 - [ ] Confirm the fee numbers in `CONFIG.fees` — currently sensible placeholders.
-- [ ] Decide whether leads should hit the backend (`/api/…`, as the booking form
-      on `index.html` does) instead of, or alongside, the WhatsApp handoff.
+- [ ] `T-052` — two dealer calls. Until they happen the Fast Sell band is derived
+      from comparables, not quotes.
 - [ ] Arabic version of the page (RTL — the manifest has `"dir": "ltr"` to change).
 - [ ] Self-host the fonts if a cold offline first-run needs to look right.
 - [ ] `index.html` is still on the old burnt-orange palette and the improvised

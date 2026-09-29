@@ -1,32 +1,24 @@
 /* ============================================================================
-   ATS — UAE Used Cars Advisor
-   Single-file logic. Nothing to build, no dependencies, no backend required:
-   leads hand off to WhatsApp exactly like the booking form on index.html.
+   ATS — Appraisal tool (internal)
+   INTERNAL TOOL — not for customers, not for publication.
+   Single-file logic. Nothing to build, no dependencies, no backend, no network
+   calls beyond loading its own dataset.
 
    EDIT POINTS — everything you will realistically want to change lives in
    two places only:
-     1. CONFIG  — phone number, fees, commission rate, valuation assumptions.
+     1. CONFIG  — valuation assumptions only. No fees, no commission.
      2. MODELS  — the vehicle / known-fault / price-band database.
    ========================================================================== */
 
 const CONFIG = {
-  whatsapp: '971558329858',
   currency: 'AED',
 
-  /* -- Service pricing. Both models are offered side by side: a FIXED fee and
-        a COMMISSION on the sale. Adjust freely — the plan cards, the
-        comparator and the net-proceeds maths all read from here. ----------- */
-  fees: {
-    inspectionBasic:      450,   // pre-purchase inspection, one vehicle, on site
-    inspectionFull:       750,   // PPI + full module scan + written report
-    buyerAgentFixed:     1800,   // sourcing, negotiation, transfer handled
-    sellerFixed:         2500,   // managed sale, flat fee, no % taken
-    sellerCommissionPct:  2.5,   // % of final agreed sale price
-    sellerCommissionMin: 2000,   // floor on the commission plan
-    transferAdmin:        350,   // RTA / Tasjeel running-around, per transfer
-  },
+  /* -- INTERNAL TOOL. No fees, no commission, no percentage anywhere in this
+        file. Sell-Ready pricing is unset and the broking line is not live —
+        ats-ops/data/car-sales-desk.md gate 1. Nothing here quotes a price. -- */
 
-  /* -- Valuation model assumptions (indicative only). ------------------- */
+  /* -- Valuation assumptions. Indicative only: the house rule is that no
+        number leaves the workshop before the car has been on the lift. ---- */
   val: {
     kmPerYearBaseline: 20000,   // UAE average; deviation moves the number
     kmPenaltyPer10k:   0.018,   // 1.8% off per 10,000 km above baseline
@@ -34,11 +26,18 @@ const CONFIG = {
     accidentMajor:     0.18,    // chassis / structural repair
     accidentMinor:     0.06,    // panel work only
     noServiceHistory:  0.09,
-    nonGccImport:      0.16,    // US / Japan import discount in this market
-    spreadPct:         0.07,    // ± band on the quoted estimate
-    tradeInFactor:     0.82,    // typical showroom offer vs private-sale value
+    nonGccImport:      0.16,    // US / Japan / Canada import discount here
+    spreadPct:         0.07,    // ± band on the estimate
     yearCurve:         1.5,     // >1 pushes mid-age cars nearer the band floor
     conditionFactor: { excellent: 1.05, good: 1.0, fair: 0.9, rough: 0.78 },
+
+    // Seller routes, mirroring the Jetour T2 precedent in
+    // ats-ops/data/sell-ready-test-jetour-t2.md
+    tradeLo:      0.80,   // Fast Sell floor — SUBJECT TO DEALER QUOTE (T-052)
+    tradeHi:      0.88,
+    askUplift:    1.12,   // Proper Listing start, above expected sale price
+    dropPct:      0.03,   // scheduled drop, agreed BEFORE listing
+    dropDays:     10,
   },
 };
 
@@ -190,19 +189,9 @@ function renderBuyer() {
         <div class="kv"><span class="k">First-year recon</span><span class="v">${AEDR(m.recon[0], m.recon[1])}</span></div>
         <div class="kv"><span class="k">Parts cost</span><span class="v">${m.parts === 'cheap' ? 'Low' : m.parts === 'mid' ? 'Moderate' : 'High'}</span></div>
         <div class="kv"><span class="k">Heat durability</span><span class="v">${m.rel}/5</span></div>
-        <a class="btn btn-outline btn-sm" style="width:100%;margin-top:18px"
-           href="#lead" data-prefill="${esc(m.name)}">Get this one inspected</a>
       </aside>
     </article>`;
   }).join('');
-
-  $$('#buy-results [data-prefill]').forEach((a) => {
-    a.addEventListener('click', () => {
-      $('#lf-intent').value = 'BUY';
-      $('#lf-vehicle').value = a.dataset.prefill;
-      syncLeadForm();
-    });
-  });
 }
 
 /* ========================== SELLER VALUATION =========================== */
@@ -239,141 +228,51 @@ function estimateValue() {
 
 function renderSeller() {
   const r = estimateValue();
-  const f = CONFIG.fees;
-  const price = r.base;
-  const commission = Math.max(price * (f.sellerCommissionPct / 100), f.sellerCommissionMin);
+  const v = CONFIG.val;
+  const base = r.base;
+
+  // Two routes, per ats-ops/data/inspection-services.md. No fee, no commission,
+  // no percentage of the sale — that is the broking line and it is not live.
+  const tradeLo = base * v.tradeLo;
+  const tradeHi = base * v.tradeHi;
+  const askStart = base * v.askUplift;
+  const step = Math.round((askStart * v.dropPct) / 500) * 500;
 
   $('#sv-out').innerHTML = `
     <div class="val-cell highlight">
-      <span class="k">Indicative private-sale range</span>
+      <span class="k">Indicative private value</span>
       <span class="big accent">${AEDR(r.lo, r.hi)}</span>
-      <span class="sub">Before reconditioning. Confirmed only after physical appraisal and a full module scan.</span>
+      <span class="sub">Desk estimate. Not a quote, and not for the customer until the
+      car has been on the lift and scanned.</span>
     </div>
     <div class="val-cell">
-      <span class="k">Net to you — fixed fee</span>
-      <span class="big">${AED(price - f.sellerFixed)}</span>
-      <span class="sub">${AED(f.sellerFixed)} flat, whatever the car sells for.</span>
+      <span class="k">Fast Sell — trade</span>
+      <span class="big">${AEDR(tradeLo, tradeHi)}</span>
+      <span class="sub"><strong>Subject to dealer quote.</strong> Derived from comparables,
+      not from a quote — two dealer calls outstanding (T-052).</span>
     </div>
     <div class="val-cell">
-      <span class="k">Net to you — commission</span>
-      <span class="big">${AED(price - commission)}</span>
-      <span class="sub">${CONFIG.fees.sellerCommissionPct}% of the agreed price, minimum ${AED(f.sellerCommissionMin)}.</span>
+      <span class="k">Proper Listing — start at</span>
+      <span class="big">${AED(askStart)}</span>
+      <span class="sub">Private sale, weeks. Ask sits above the expected sale price so the
+      drop schedule has somewhere to go.</span>
     </div>
     <div class="val-cell">
-      <span class="k">Trade-in / dealer offer</span>
-      <span class="big">${AED(price * CONFIG.val.tradeInFactor)}</span>
-      <span class="sub">What a showroom typically offers for the same car — the gap is what a managed sale is worth.</span>
+      <span class="k">Drop schedule</span>
+      <span class="big">−${AED(step)} / ${v.dropDays} days</span>
+      <span class="sub">Floor ${AED(base)}. Agreed with the owner <strong>before</strong>
+      listing — that agreement is the product, not the price.</span>
     </div>
     ${r.flags.length ? `<div class="val-cell"><span class="k">Applied deductions</span><span class="sub" style="margin-top:0">${r.flags.map(esc).join(' · ')}</span></div>` : ''}
     <div class="val-cell">
-      <span class="k">Recommended pre-sale work</span>
-      <span class="sub" style="margin-top:0">Clear all stored fault codes at source, A/C performance, full detail and paint correction. On this platform, expect ${AEDR(r.m.recon[0], r.m.recon[1])} to present as a clean car — and it typically returns more than it costs.</span>
+      <span class="k">Pre-sale work</span>
+      <span class="sub" style="margin-top:0">Clear stored faults at source, A/C performance,
+      detail and paint correction. On this platform expect
+      ${AEDR(r.m.recon[0], r.m.recon[1])} to present as a clean car — it usually returns
+      more than it costs.</span>
     </div>`;
 }
 
-/* ========================== FEE COMPARATOR ============================= */
-function renderCompare() {
-  const price = parseInt($('#cmp-price').value, 10);
-  const f = CONFIG.fees;
-  $('#cmp-price-out').textContent = AED(price);
-
-  const commission = Math.max(price * (f.sellerCommissionPct / 100), f.sellerCommissionMin);
-  const fixed = f.sellerFixed;
-  const breakeven = fixed / (f.sellerCommissionPct / 100);
-  const fixedWins = fixed < commission;
-
-  $('#cmp-out').innerHTML = `
-    <div class="cmp ${fixedWins ? 'win' : ''}">
-      <span class="k">Fixed fee plan</span>
-      <span class="n">${AED(fixed)}</span>
-      <p class="d">Flat. Net to you ${AED(price - fixed)}.</p>
-      ${fixedWins ? '<span class="badge">Cheaper at this price</span>' : ''}
-    </div>
-    <div class="cmp ${!fixedWins ? 'win' : ''}">
-      <span class="k">Commission plan — ${f.sellerCommissionPct}%</span>
-      <span class="n">${AED(commission)}</span>
-      <p class="d">Net to you ${AED(price - commission)}.${commission === f.sellerCommissionMin ? ' Minimum fee applied.' : ''}</p>
-      ${!fixedWins ? '<span class="badge">Cheaper at this price</span>' : ''}
-    </div>
-    <div class="cmp">
-      <span class="k">Break-even price</span>
-      <span class="n">${AED(breakeven)}</span>
-      <p class="d">Above this, the fixed fee costs you less. Below it, take the commission plan — we will tell you which one you are in before you sign anything.</p>
-    </div>`;
-}
-
-/* ========================== LEAD FORM ================================== */
-function syncLeadForm() {
-  const intent = $('#lf-intent').value;
-  $('#lf-vehicle-label').textContent = intent === 'SELL'
-    ? 'Your vehicle (make, model, year, km)'
-    : 'Vehicle or shortlist you are considering';
-  $('#lf-budget-wrap').hidden = intent === 'SELL';
-  $('#lf-plan-wrap').hidden = intent === 'INSPECT';
-}
-
-function initLeadForm() {
-  const form = $('#lead-form');
-  const status = $('#lf-status');
-
-  $('#lf-intent').addEventListener('change', syncLeadForm);
-  syncLeadForm();
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    status.textContent = '';
-    status.className = 'form-status';
-
-    if ($('#lf-hp').value) return; // honeypot
-
-    const name = $('#lf-name').value.trim();
-    const phone = $('#lf-phone').value.trim();
-    if (name.length < 2) { status.textContent = 'Please enter your name.'; status.className = 'form-status err'; return; }
-    if (phone.length < 6) { status.textContent = 'Please enter a valid phone number.'; status.className = 'form-status err'; return; }
-
-    const sel = (id) => { const el = $(id); return el.options[el.selectedIndex].text; };
-    const lines = [
-      `Used Cars Advisor — ${sel('#lf-intent')}`,
-      `Name: ${name}`,
-      `Phone: ${phone}`,
-    ];
-    const vehicle = $('#lf-vehicle').value.trim();
-    if (vehicle) lines.push(`Vehicle: ${vehicle}`);
-    if (!$('#lf-budget-wrap').hidden && $('#lf-budget').value.trim()) lines.push(`Budget: AED ${$('#lf-budget').value.trim()}`);
-    if (!$('#lf-plan-wrap').hidden) lines.push(`Preferred plan: ${sel('#lf-plan')}`);
-    const notes = $('#lf-notes').value.trim();
-    if (notes) lines.push(`Notes: ${notes}`);
-
-    window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
-    status.textContent = 'Opening WhatsApp…';
-    status.className = 'form-status ok';
-  });
-}
-
-/* ========================== PLAN CARDS ================================= */
-function renderPlans() {
-  const f = CONFIG.fees;
-  const plans = [
-    { kind: 'fixed', tag: 'FIXED', name: 'Inspection only', price: AED(f.inspectionBasic), unit: 'per vehicle', who: 'Buyer',
-      items: ['Full pre-purchase inspection on the lift', 'Complete module scan, all systems', 'Go / no-go call with a target price', 'Written summary on WhatsApp the same day'] },
-    { kind: 'fixed', tag: 'FIXED', name: 'Inspection + report', price: AED(f.inspectionFull), unit: 'per vehicle', who: 'Buyer',
-      items: ['Everything in Inspection only', 'Photographed written report, fault-by-fault', 'Costed repair list you can negotiate with', 'Second opinion on a car you already viewed'] },
-    { kind: 'fixed', tag: 'FIXED', name: "Buyer's agent", price: AED(f.buyerAgentFixed), unit: 'flat, per purchase', who: 'Buyer',
-      items: ['We shortlist and vet the listings for you', 'Inspection of the chosen car included', 'We negotiate on your behalf', `RTA transfer and paperwork handled (+${AED(f.transferAdmin)} fees)`] },
-    { kind: 'commission', tag: 'BOTH', name: 'Managed sale', price: `${f.sellerCommissionPct}%`, unit: `of sale price · or ${AED(f.sellerFixed)} flat`, who: 'Seller',
-      items: ['Appraisal, module scan and pre-sale fault clearing', 'Listing, photography and buyer filtering', 'Test drives and negotiation handled for you', 'Bank settlement and RTA transfer at the counter', 'You pick the fee model — whichever is cheaper for your car'] },
-  ];
-
-  $('#plan-grid').innerHTML = plans.map((p) => `
-    <div class="plan ${p.kind}">
-      <span class="tagx">${p.tag}</span>
-      <h3>${esc(p.name)}</h3>
-      <div class="price">${p.price}</div>
-      <div class="who">${esc(p.unit)} · ${esc(p.who)}</div>
-      <ul>${p.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>
-      <div class="foot"><a class="btn btn-outline btn-sm" style="width:100%" href="#lead">Start with this</a></div>
-    </div>`).join('');
-}
 
 /* ========================== BOOT ======================================= */
 function initBuyer() {
@@ -429,8 +328,6 @@ function initTabs() {
       const target = btn.dataset.tab;
       $$('.mode-switch button').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
       $$('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== target; });
-      if (target === 'sell') { $('#lf-intent').value = 'SELL'; syncLeadForm(); }
-      if (target === 'buy')  { $('#lf-intent').value = 'BUY';  syncLeadForm(); }
     });
   });
 }
@@ -476,11 +373,7 @@ function initInstallPrompt() {
 document.addEventListener('DOMContentLoaded', async () => {
   // Plans, the fee comparator and the lead form carry no vehicle data, so they
   // come up immediately and stay usable even if the dataset fetch fails.
-  renderPlans();
   initTabs();
-  initLeadForm();
-  $('#cmp-price').addEventListener('input', renderCompare);
-  renderCompare();
   $('#year-now').textContent = new Date().getFullYear();
 
   try {

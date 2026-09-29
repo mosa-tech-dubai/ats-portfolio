@@ -1,7 +1,7 @@
 {
-  "name": "ATS — UAE Used Cars Advisor",
-  "short_name": "ATS Advisor",
-  "description": "Buy or sell a used car in the UAE with a diagnostics bench behind you: known platform faults, inspection lists, valuation and fee comparison.",
+  "name": "ATS Appraisal (Internal)",
+  "short_name": "ATS Appraisal",
+  "description": "Internal appraisal and inspection reference for ATS workshop use. Not for distribution.",
   "start_url": "advisor.html",
   "scope": "./",
   "id": "/ats-advisor",
@@ -10,10 +10,29 @@
   "theme_color": "#0C0F12",
   "lang": "en",
   "dir": "ltr",
-  "categories": ["automotive", "business", "utilities"],
+  "categories": [
+    "automotive",
+    "business",
+    "utilities"
+  ],
   "icons": [
-    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
