@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UAE Used Cars Advisor — ATS</title>
+<meta name="description" content="Buy or sell a used car in the UAE with a diagnostic workshop behind you. Known-fault briefings, pre-purchase inspection, managed sale on a fixed fee or commission. Dubai, UAE.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Montserrat:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/advisor.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M88 14 L112 14 L194 186 L150 186 L100 62 L50 186 L6 186 Z" fill="#F4F4F2"/><path d="M34 127 L166 127 L176 149 L24 149 Z" fill="#C6602C"/><rect x="84" y="106" width="32" height="21" fill="#2A73FF"/><text x="100" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#F4F4F2">AI</text></svg>
+      <div class="nav-brand-text">
+        <span class="t">ATS</span>
+        <span class="s">Automotive Tech Solutions</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Workshop</a>
+      <a href="#advisor" class="active">Advisor</a>
+      <a href="#plans">Plans</a>
+      <a href="#process">Process</a>
+      <a href="#flags">Red flags</a>
+      <a href="#lead" class="cta">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <span class="eyebrow">Dubai, UAE — Buyers &amp; Sellers</span>
+    <h1>Every used car here has a <em>heat history</em>. We read it before you pay.</h1>
+    <p class="lede">A used-car advisory run out of a diagnostics bench, not a showroom. Buyers get the known faults, the scan data and a target price before the money moves. Sellers get the car presented properly and sold — on a flat fee or a commission, whichever costs you less.</p>
+    <div class="hero-actions">
+      <a href="#advisor" class="btn btn-primary">Open the advisor</a>
+      <a href="#plans" class="btn btn-outline">See the plans</a>
+    </div>
+    <div class="hero-meta">
+      <div><span class="val">24</span><span class="lbl">Platforms on file</span></div>
+      <div><span class="val">PPI</span><span class="lbl">Inspection + full module scan</span></div>
+      <div><span class="val">2</span><span class="lbl">Fee models — fixed or %</span></div>
+      <div><span class="val">RTA</span><span class="lbl">Transfer handled</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ======================= ADVISOR ======================= -->
+<section id="advisor" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// The Advisor</span>
+        <h2>Tell us which side of the deal you are on.</h2>
+      </div>
+      <p>Both tools run on the same reference data: what actually fails on each platform in this climate, and what it costs to put right.</p>
+    </div>
+
+    <div class="mode-switch" role="tablist" aria-label="Buyer or seller">
+      <button role="tab" data-tab="buy" aria-selected="true">I'm buying</button>
+      <button role="tab" data-tab="sell" aria-selected="false">I'm selling</button>
+    </div>
+
+    <!-- ---------- BUYER ---------- -->
+    <div data-panel="buy">
+      <div class="tool-panel">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label for="bv-budget">Budget ceiling — <span class="val-out" id="bv-budget-out">AED 90,000</span></label>
+            <input type="range" id="bv-budget" min="20000" max="350000" step="5000" value="90000">
+            <span class="hint">All-in, before transfer and insurance.</span>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Body style</label>
+          <div class="chip-row">
+            <button class="chip" data-group="body" data-value="any" aria-pressed="true">Any</button>
+            <button class="chip" data-group="body" data-value="suv" aria-pressed="false">SUV</button>
+            <button class="chip" data-group="body" data-value="sedan" aria-pressed="false">Sedan</button>
+            <button class="chip" data-group="body" data-value="hatch" aria-pressed="false">Hatch</button>
+            <button class="chip" data-group="body" data-value="pickup" aria-pressed="false">Pickup</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Primary use</label>
+          <div class="chip-row">
+            <button class="chip" data-group="use" data-value="family" aria-pressed="true">Family duty</button>
+            <button class="chip" data-group="use" data-value="city" aria-pressed="false">City / commute</button>
+            <button class="chip" data-group="use" data-value="highway" aria-pressed="false">Long highway runs</button>
+            <button class="chip" data-group="use" data-value="offroad" aria-pressed="false">Desert / off-road</button>
+            <button class="chip" data-group="use" data-value="tow" aria-pressed="false">Towing / hauling</button>
+            <button class="chip" data-group="use" data-value="economy" aria-pressed="false">Cheapest to run</button>
+            <button class="chip" data-group="use" data-value="fun" aria-pressed="false">Driving enjoyment</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>How long will you keep it</label>
+          <div class="chip-row">
+            <button class="chip" data-group="horizon" data-value="short" aria-pressed="false">Under 2 years</button>
+            <button class="chip" data-group="horizon" data-value="long" aria-pressed="true">3 years or more</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:22px">
+          <label>Appetite for maintenance</label>
+          <div class="chip-row">
+            <button class="chip" data-group="tolerance" data-value="low" aria-pressed="true">I want it boring and cheap</button>
+            <button class="chip" data-group="tolerance" data-value="mid" aria-pressed="false">I'll service it properly</button>
+            <button class="chip" data-group="tolerance" data-value="high" aria-pressed="false">I accept a real bill for the right car</button>
+          </div>
+        </div>
+
+        <div class="panel-foot">
+          <span class="note">Ranked on heat durability, use-case fit, parts cost and realistic first-year spend — not on what we would rather sell you.</span>
+        </div>
+      </div>
+
+      <div class="results" id="buy-results"></div>
+    </div>
+
+    <!-- ---------- SELLER ---------- -->
+    <div data-panel="sell" hidden>
+      <div class="tool-panel">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label for="sv-model">Your vehicle</label>
+            <select id="sv-model"></select>
+          </div>
+          <div class="field">
+            <label for="sv-year">Model year — <span class="val-out" id="sv-year-out">2017</span></label>
+            <input type="range" id="sv-year" min="2010" max="2023" step="1" value="2017">
+          </div>
+          <div class="field">
+            <label for="sv-km">Odometer — <span class="val-out" id="sv-km-out">120,000 km</span></label>
+            <input type="range" id="sv-km" min="10000" max="400000" step="5000" value="120000">
+          </div>
+          <div class="field">
+            <label for="sv-cond">Overall condition</label>
+            <select id="sv-cond">
+              <option value="excellent">Excellent — nothing to apologise for</option>
+              <option value="good" selected>Good — normal wear</option>
+              <option value="fair">Fair — needs cosmetic work</option>
+              <option value="rough">Rough — mechanical work owed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-acc">Accident history</label>
+            <select id="sv-acc">
+              <option value="none" selected>Clean, no repairs</option>
+              <option value="minor">Panel / cosmetic repair only</option>
+              <option value="major">Structural or chassis repair</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-spec">Specification</label>
+            <select id="sv-spec">
+              <option value="gcc" selected>GCC spec</option>
+              <option value="import">US / Japan / other import</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sv-hist">Service history</label>
+            <label style="display:flex;align-items:center;gap:10px;font-family:'Montserrat',sans-serif;font-size:13.5px;color:var(--gray);text-transform:none;letter-spacing:0">
+              <input type="checkbox" id="sv-hist" checked style="width:auto;accent-color:var(--orange)">
+              Documented and complete
+            </label>
+          </div>
+        </div>
+        <div class="panel-foot">
+          <span class="note">Indicative only. The confirmed number comes from a physical appraisal and a full module scan — stored faults move the price more than mileage does.</span>
+        </div>
+      </div>
+
+      <div class="val-grid" id="sv-out"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PLANS ======================= -->
+<section id="plans" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Plans &amp; Fees</span>
+        <h2>Fixed fee or commission. You choose, and we tell you which one is cheaper.</h2>
+      </div>
+      <p>Nothing is taken from the buyer and the seller on the same deal. One side pays, and it says so on the invoice.</p>
+    </div>
+
+    <div class="plan-grid" id="plan-grid"></div>
+
+    <div class="compare">
+      <div class="field">
+        <label for="cmp-price">If the car sells for — <span class="val-out" id="cmp-price-out">AED 100,000</span></label>
+        <input type="range" id="cmp-price" min="20000" max="400000" step="5000" value="100000">
+      </div>
+      <div class="compare-out" id="cmp-out"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROCESS ======================= -->
+<section id="process" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// How It Runs</span>
+        <h2>From first call to plates changed.</h2>
+      </div>
+      <p>Money moves at the transfer counter, by bank transfer or manager's cheque — never in a car park, never in cash on a promise.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="n">01</span>
+        <h4>Brief</h4>
+        <p>Buyers: budget, use and shortlist. Sellers: the car, its history and the number you want. Fifteen minutes on WhatsApp.</p>
+      </div>
+      <div class="step">
+        <span class="n">02</span>
+        <h4>Inspect &amp; scan</h4>
+        <p>On the lift, then on the scanner. All modules, stored codes and freeze-frames — not a walk-around and an OBD dongle.</p>
+      </div>
+      <div class="step">
+        <span class="n">03</span>
+        <h4>Verify the paper</h4>
+        <p>RTA vehicle history, mulkiya against the chassis, outstanding finance, export or salvage markers, GCC spec versus import.</p>
+      </div>
+      <div class="step">
+        <span class="n">04</span>
+        <h4>Price the truth</h4>
+        <p>A costed fault list becomes your negotiating position, or your seller's recon plan. Both sides get the same numbers.</p>
+      </div>
+      <div class="step">
+        <span class="n">05</span>
+        <h4>Settle &amp; transfer</h4>
+        <p>Bank loan settlement, insurance, Tasjeel test where needed, then transfer at the counter with both parties present.</p>
+      </div>
+      <div class="step">
+        <span class="n">06</span>
+        <h4>Hand over</h4>
+        <p>Keys, spare key programmed if one is missing, and a written record of what was found and what was fixed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RED FLAGS ======================= -->
+<section id="flags" class="rule">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-tag">// Walk Away</span>
+        <h2>What kills deals in this market.</h2>
+      </div>
+      <p>None of these are visible on a test drive. All of them are findable in an afternoon.</p>
+    </div>
+    <div class="flag-list">
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Flood or water-damaged car re-registered as clean</h4>
+          <p>Silt lines under the carpet and inside the spare wheel well, corrosion on connector pins, and modules with impossible fault histories. Electrical faults surface months later, one control unit at a time, and never stop.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Cut-and-shut or repaired structural damage</h4>
+          <p>Fresh weld and non-factory sealer on rails and pillars, mismatched panel gaps, and a car that never tracks straight. Nothing about the geometry can be trusted again, and no ADAS or steering calibration will settle properly.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl">Stop — do not buy</span>
+        <div>
+          <h4>Outstanding bank finance on the mulkiya</h4>
+          <p>The transfer will not complete and the seller's "we'll settle it after" is how deposits disappear. Settlement letter first, transfer second, money last.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Odometer inconsistent with the service record</h4>
+          <p>A wound-back cluster shows up as a mismatch between module-stored mileage, service stamps and RTA test history. It is provable, and it is a negotiating lever if the car is otherwise sound.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Non-GCC import with no cooling upgrade</h4>
+          <p>US and Japan imports arrive with radiators, A/C capacity and rubber specified for a different climate. They can work here, but they need the cooling system checked properly and they always resell for less — both belong in the price.</p>
+        </div>
+      </div>
+      <div class="flag">
+        <span class="lvl warn">Price it, don't panic</span>
+        <div>
+          <h4>Recently cleared fault memory</h4>
+          <p>An adaptation counter reset days before the viewing, with every module reporting zero history, tells you more than a fault code would. We read readiness and adaptation data, not just the current codes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= LEAD ======================= -->
+<section id="lead" class="contact">
+  <div class="wrap">
+    <span class="section-tag" style="justify-content:center; display:flex;">// Get Started</span>
+    <h2>Send the brief. We'll tell you the truth about the car.</h2>
+    <p>Buying, selling, or you just want a second opinion on something you already viewed — start here and it continues on WhatsApp.</p>
+
+    <div class="lead-card">
+      <h3>Advisor request</h3>
+      <form id="lead-form" novalidate>
+        <div class="field">
+          <label for="lf-intent">What do you need</label>
+          <select id="lf-intent">
+            <option value="BUY">I'm buying — advise and inspect</option>
+            <option value="SELL">I'm selling — appraise and sell it for me</option>
+            <option value="INSPECT">Inspection only — I found a car</option>
+          </select>
+        </div>
+        <div class="field-grid">
+          <div class="field">
+            <label for="lf-name">Name</label>
+            <input type="text" id="lf-name" maxlength="120" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="lf-phone">Phone</label>
+            <input type="tel" id="lf-phone" maxlength="40" autocomplete="tel" placeholder="+971 5X XXX XXXX" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="lf-vehicle" id="lf-vehicle-label">Vehicle or shortlist you are considering</label>
+          <input type="text" id="lf-vehicle" maxlength="180" placeholder="e.g. 2016 Nissan Patrol Y62 SE, 148,000 km">
+        </div>
+        <div class="field" id="lf-budget-wrap">
+          <label for="lf-budget">Budget (AED)</label>
+          <input type="text" id="lf-budget" maxlength="20" placeholder="120,000">
+        </div>
+        <div class="field" id="lf-plan-wrap" hidden>
+          <label for="lf-plan">Preferred fee model</label>
+          <select id="lf-plan">
+            <option value="EITHER">Whichever costs me less</option>
+            <option value="FIXED">Fixed fee</option>
+            <option value="COMMISSION">Commission on the sale</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="lf-notes">Anything else</label>
+          <textarea id="lf-notes" rows="3" maxlength="1000" placeholder="Known faults, service history, deadline, listings you have seen..."></textarea>
+        </div>
+        <div class="field hp-field" aria-hidden="true">
+          <label for="lf-hp">Leave blank</label>
+          <input type="text" id="lf-hp" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Send via WhatsApp</button>
+        <div class="form-status" id="lf-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+
+    <p class="disclaimer">
+      Price bands, valuations and reconditioning figures on this page are indicative market estimates for guidance only — they are not a formal valuation, an offer, or a guarantee of sale price. Known-fault notes describe failures commonly documented on each platform; they are not a statement about any specific vehicle. Every car is assessed individually on the lift and on the scanner before any number is confirmed.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap f-inner">
+    <div class="f-brand">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M88 14 L112 14 L194 186 L150 186 L100 62 L50 186 L6 186 Z" fill="#8B8E95"/><path d="M34 127 L166 127 L176 149 L24 149 Z" fill="#8B8E95"/></svg>
+      <span>ATS — Automotive Tech Solutions © <span id="year-now">2026</span></span>
+    </div>
+    <span class="f-note">UAE Used Cars Advisor · Dubai, UAE</span>
+  </div>
+</footer>
+
+<script src="assets/advisor.js"></script>
+</body>
+</html>
