@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" width="900" height="330">
+  <!-- ATS wordmark lockup — for use on light/white backgrounds. Transparent background. -->
+  <text x="300" y="150" text-anchor="middle" font-family="Oswald, Arial Narrow, sans-serif" font-weight="700" font-size="130" letter-spacing="-2" fill="#0C0F12">ATS</text>
+  <path d="M170,118 L266,118 L278,118 L288,98 L299,136 L309,104 L320,118 L430,118"
+        fill="none" stroke="#F2A93B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+  <text x="300" y="195" text-anchor="middle" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="19" style="letter-spacing:4px">
+    <tspan fill="#5A6067">AUTOMOTIVE </tspan><tspan fill="#B9791F">TECH</tspan><tspan fill="#5A6067"> SOLUTIONS</tspan>
+  </text>
+</svg>

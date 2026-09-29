@@ -20,7 +20,8 @@ block local data files over `file://`, and service workers need a real origin.
 | `data/models.json` | The vehicle database. Single source of truth. |
 | `manifest.webmanifest` | Web app manifest — name, icons, standalone display. |
 | `sw.js` | Service worker: offline shell. |
-| `assets/icons/` | Generated PNG icons for install and home screen. |
+| `assets/icons/` | PNG icons for install and home screen, downscaled from the official avatar. |
+| `assets/brand/` | The official ATS marks, copied verbatim from the `ats-ops` brand kit. |
 
 `index.html` is untouched apart from one nav link.
 
@@ -87,10 +88,12 @@ is static, so once cached it works in a basement car park with no signal.
 - **Fonts** — Google Fonts are cross-origin. They get cached after the first
   online visit, but a first run with no connection falls back to system fonts.
   Self-host the three families if that matters.
-- **Icons** — generated from the ATS mark at 192, 512, maskable 512 and a
-  180px Apple touch icon. Regenerate by rendering the SVG in the nav at those
-  sizes on a `#0A0B0D` background; the maskable one needs the mark at roughly
-  56% so it survives Android's circular mask.
+- **Icons** — downscaled from the official ATS avatar, vendored at
+  `assets/brand/ats-avatar-1024x1024.png` (source of truth: the `ats-ops`
+  repo, `brand/assets/`). Its badge sits at ~62% of the width, inside the
+  maskable safe zone, and the background bleeds to every edge, so the same
+  render serves both the plain and the maskable icon. Regenerate by
+  downscaling that PNG to 512, 192 and 180 — do not redraw the mark.
 
 ### If it ever needs to be in the app stores
 
@@ -100,6 +103,22 @@ first — VIN camera scan and share-sheet intake of a listing URL are the two
 that would both clear review and actually be useful in the field. An iOS build
 requires a Mac with Xcode.
 
+## Brand
+
+The marks in `assets/brand/` come from `ats-ops` → `brand/assets/`, which is
+the source of truth. Per the brand spec the **badge** is the avatar / favicon /
+watermark mark — which is what the nav, the footer and the app icon use here.
+The wordmark lockup is for video opens and lower-thirds; the stacked lockup is
+for square placements.
+
+**The advisor page does not yet use the brand palette.** It inherits the
+portfolio page's colours (`#C6602C` burnt orange, `#F4F4F2`, Space Grotesk),
+while the real brand is Charcoal-Ink `#0C0F12`, Ash Panel `#171B1F`, Bone
+`#ECE8E0`, Steel `#4A535C`, Amber `#F2A93B`, Caliper Red `#D6453D` (rare), set
+in Oswald / IBM Plex Sans / JetBrains Mono. The amber arc in the mark
+consequently sits against a burnt-orange page. Aligning both this page and
+`index.html` to the spec is an open decision, not an oversight.
+
 ## Open items
 
 - [ ] Calibrate `price` bands against live listings (biggest accuracy gap).
@@ -108,4 +127,6 @@ requires a Mac with Xcode.
       on `index.html` does) instead of, or alongside, the WhatsApp handoff.
 - [ ] Arabic version of the page (RTL — the manifest has `"dir": "ltr"` to change).
 - [ ] Self-host the fonts if a cold offline first-run needs to look right.
+- [ ] Decide whether to retheme the advisor and `index.html` to the brand
+      palette and typefaces (see Brand, above).
 - [ ] Optional: RTA transfer cost calculator (plates, insurance, Tasjeel test).

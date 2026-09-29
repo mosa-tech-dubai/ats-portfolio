@@ -5,7 +5,7 @@
 
    Bump CACHE whenever a precached file changes, or returning visitors keep
    the old copy until the cache is evicted. */
-const CACHE = 'ats-advisor-v1';
+const CACHE = 'ats-advisor-v2';
 
 const PRECACHE = [
   'advisor.html',
