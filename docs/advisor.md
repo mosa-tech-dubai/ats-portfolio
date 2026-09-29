@@ -111,13 +111,31 @@ watermark mark — which is what the nav, the footer and the app icon use here.
 The wordmark lockup is for video opens and lower-thirds; the stacked lockup is
 for square placements.
 
-**The advisor page does not yet use the brand palette.** It inherits the
-portfolio page's colours (`#C6602C` burnt orange, `#F4F4F2`, Space Grotesk),
-while the real brand is Charcoal-Ink `#0C0F12`, Ash Panel `#171B1F`, Bone
-`#ECE8E0`, Steel `#4A535C`, Amber `#F2A93B`, Caliper Red `#D6453D` (rare), set
-in Oswald / IBM Plex Sans / JetBrains Mono. The amber arc in the mark
-consequently sits against a burnt-orange page. Aligning both this page and
-`index.html` to the spec is an open decision, not an oversight.
+The advisor is set to the spec:
+
+| Token | Value | Job |
+|---|---|---|
+| `--ink` | `#0C0F12` | Charcoal-Ink, the base. Never pure black. |
+| `--panel` | `#171B1F` | Ash Panel — cards |
+| `--panel-2` | `#1E2328` | inputs and insets |
+| `--line` | `#2A3037` | hairlines |
+| `--steel` | `#4A535C` | Steel — **borders and dividers only** |
+| `--muted` | `#A9A49A` | secondary text and labels |
+| `--bone` | `#ECE8E0` | Bone — primary reading |
+| `--amber` | `#F2A93B` | Scan Amber — accent, links, every active state |
+| `--alert` | `#D6453D` | Caliper Red — alerts, rare by design |
+
+Type: **Oswald 700** headings (signage), **IBM Plex Sans** body
+(documentation), **JetBrains Mono** for every number — the spec is explicit
+that all data lives in the mono face.
+
+One deliberate departure: the spec describes Steel as also doing secondary
+text, but `#4A535C` on `#0C0F12` is 2.3:1, which is unreadable at label sizes.
+Steel does borders here and all text sits on `--muted` (9:1). If you want the
+spec followed literally instead, that is the line to change.
+
+`index.html` was left on its original burnt-orange palette by decision, so the
+two pages differ while sharing a nav link.
 
 ## Open items
 
@@ -127,6 +145,6 @@ consequently sits against a burnt-orange page. Aligning both this page and
       on `index.html` does) instead of, or alongside, the WhatsApp handoff.
 - [ ] Arabic version of the page (RTL — the manifest has `"dir": "ltr"` to change).
 - [ ] Self-host the fonts if a cold offline first-run needs to look right.
-- [ ] Decide whether to retheme the advisor and `index.html` to the brand
-      palette and typefaces (see Brand, above).
+- [ ] `index.html` is still on the old burnt-orange palette and the improvised
+      "A" mark. Aligning it to the spec would make the site consistent.
 - [ ] Optional: RTA transfer cost calculator (plates, insurance, Tasjeel test).

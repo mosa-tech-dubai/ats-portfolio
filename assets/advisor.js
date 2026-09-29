@@ -70,6 +70,9 @@ async function loadModels() {
 
 /* ========================== helpers ==================================== */
 const AED = (n) => CONFIG.currency + ' ' + Math.round(n).toLocaleString('en-US');
+// Ranges carry the currency once — repeating it wraps the sidebar values.
+const AEDR = (lo, hi) => CONFIG.currency + ' ' + Math.round(lo).toLocaleString('en-US')
+  + ' \u2013 ' + Math.round(hi).toLocaleString('en-US');
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -182,9 +185,9 @@ function renderBuyer() {
         </div>
       </div>
       <aside class="res-side">
-        <div class="kv"><span class="k">Market band</span><span class="v">${AED(m.price[0])} – ${AED(m.price[1])}</span></div>
+        <div class="kv"><span class="k">Market band</span><span class="v">${AEDR(m.price[0], m.price[1])}</span></div>
         <div class="kv"><span class="k">Your ceiling</span><span class="v">${AED(ceiling)}</span></div>
-        <div class="kv"><span class="k">First-year recon</span><span class="v">${AED(m.recon[0])} – ${AED(m.recon[1])}</span></div>
+        <div class="kv"><span class="k">First-year recon</span><span class="v">${AEDR(m.recon[0], m.recon[1])}</span></div>
         <div class="kv"><span class="k">Parts cost</span><span class="v">${m.parts === 'cheap' ? 'Low' : m.parts === 'mid' ? 'Moderate' : 'High'}</span></div>
         <div class="kv"><span class="k">Heat durability</span><span class="v">${m.rel}/5</span></div>
         <a class="btn btn-outline btn-sm" style="width:100%;margin-top:18px"
@@ -243,7 +246,7 @@ function renderSeller() {
   $('#sv-out').innerHTML = `
     <div class="val-cell highlight">
       <span class="k">Indicative private-sale range</span>
-      <span class="big accent">${AED(r.lo)} – ${AED(r.hi)}</span>
+      <span class="big accent">${AEDR(r.lo, r.hi)}</span>
       <span class="sub">Before reconditioning. Confirmed only after physical appraisal and a full module scan.</span>
     </div>
     <div class="val-cell">
@@ -264,7 +267,7 @@ function renderSeller() {
     ${r.flags.length ? `<div class="val-cell"><span class="k">Applied deductions</span><span class="sub" style="margin-top:0">${r.flags.map(esc).join(' · ')}</span></div>` : ''}
     <div class="val-cell">
       <span class="k">Recommended pre-sale work</span>
-      <span class="sub" style="margin-top:0">Clear all stored fault codes at source, A/C performance, full detail and paint correction. On this platform, expect ${AED(r.m.recon[0])} – ${AED(r.m.recon[1])} to present as a clean car — and it typically returns more than it costs.</span>
+      <span class="sub" style="margin-top:0">Clear all stored fault codes at source, A/C performance, full detail and paint correction. On this platform, expect ${AEDR(r.m.recon[0], r.m.recon[1])} to present as a clean car — and it typically returns more than it costs.</span>
     </div>`;
 }
 
